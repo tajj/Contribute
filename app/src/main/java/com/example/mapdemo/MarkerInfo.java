@@ -4,7 +4,7 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
 /**
- * Created by mayajey on 7/14/17.
+ * Created on 7/14/17.
  */
 
 @ParseClassName("MarkerInfo")

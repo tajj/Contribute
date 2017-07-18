@@ -2,7 +2,7 @@ package com.example.mapdemo;
 import com.google.android.gms.maps.GoogleMap;
 
 /**
- * Created by mayajey on 7/14/17.
+ * Created on 7/14/17.
  */
 
 // I have no idea if we need this

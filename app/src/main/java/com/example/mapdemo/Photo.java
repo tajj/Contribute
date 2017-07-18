@@ -1,7 +1,7 @@
 package com.example.mapdemo;
 
 /**
- * Created by mayajey on 7/17/17.
+ * Created on 7/17/17.
  */
 
 import com.parse.ParseClassName;
