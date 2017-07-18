@@ -53,7 +53,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".MarkerDetailsActivity"></activity>
-        <activity android:name=".PhotoTakeActivity"></activity>
 
         <uses-library android:required="true" android:name="com.google.android.maps" />
 
