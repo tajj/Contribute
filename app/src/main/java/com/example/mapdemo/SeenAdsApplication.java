@@ -1,12 +1,13 @@
 package com.example.mapdemo;
 
 /**
- * Created on 7/17/17.
+ * Created by mayajey on 7/17/17.
  */
 
 import android.app.Application;
 
 import com.parse.Parse;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 
 import okhttp3.OkHttpClient;
@@ -18,11 +19,13 @@ public class SeenAdsApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+
+
+
         // TODO register more subclasses (probably one for photo if that's not included within marker)
 
-        // this could be useless (MarkerInfo, that is, for now)
-        ParseObject.registerSubclass(MarkerInfo.class);
-        ParseObject.registerSubclass(Photo.class);
+        // this could be useless for now
+       // ParseObject.registerSubclass(MarkerInfo.class);
         // Use for monitoring Parse network traffic
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
@@ -42,6 +45,12 @@ public class SeenAdsApplication extends Application {
         ParseObject testObject = new ParseObject("TestObject");
         testObject.put("foo", "TEST2");
         testObject.saveInBackground();
+
+    //facebook
+//        Parse.initialize(this);
+     //   FacebookSdk.sdkInitialize(getApplicationContext());
+        ParseFacebookUtils.initialize(this); //supposed to be context..what context
+
     }
 }
 
