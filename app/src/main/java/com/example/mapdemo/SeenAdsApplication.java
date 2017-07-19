@@ -1,7 +1,7 @@
 package com.example.mapdemo;
 
 /**
- * Created on 7/17/17.
+ * Created by mayajey on 7/17/17.
  */
 
 import android.app.Application;
@@ -20,9 +20,8 @@ public class SeenAdsApplication extends Application {
 
         // TODO register more subclasses (probably one for photo if that's not included within marker)
 
-        // this could be useless (MarkerInfo, that is, for now)
-        ParseObject.registerSubclass(MarkerInfo.class);
-        ParseObject.registerSubclass(Photo.class);
+        // this could be useless for now
+        // ParseObject.registerSubclass(MarkerInfo.class);
         // Use for monitoring Parse network traffic
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
@@ -44,4 +43,3 @@ public class SeenAdsApplication extends Application {
         testObject.saveInBackground();
     }
 }
-

@@ -17,11 +17,12 @@
         android:scaleType="fitXY"
         app:srcCompat="@drawable/cameraicon" />
 
-    <TextView
-        android:id="@+id/tvSnippet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+    <ImageButton
+        android:id="@+id/ibGalleryPic"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_vector_photo" />
 
     <TextView
         android:id="@+id/tvTitle"
@@ -30,8 +31,9 @@
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/tvLocation"
+        android:id="@+id/tvSnippet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TextView" />
+
 </LinearLayout>
