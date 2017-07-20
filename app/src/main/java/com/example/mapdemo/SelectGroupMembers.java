@@ -28,6 +28,7 @@ public class SelectGroupMembers extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_group_members);
         Intent i=getIntent();
+        final String grpName=i.getExtras().getString("grpName");
         final String grpId=i.getExtras().getString("grpId");
         final ListView listview=(ListView)findViewById(R.id.usersList); //TODO add to xml,create groupname
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserFriends");
@@ -79,8 +80,8 @@ public class SelectGroupMembers extends AppCompatActivity {
 
                 try {
                     ParseObject addUsr=new ParseObject("UserConnections");
+                    addUsr.put("groupName", grpName);
                     addUsr.put("userGroup", grpId);
-
                     addUsr.put("userId", userids[position]);
                     addUsr.save();
                     Toast.makeText(getApplicationContext(), "Member added to Group", Toast.LENGTH_LONG).show();
@@ -94,7 +95,7 @@ public class SelectGroupMembers extends AppCompatActivity {
 
     }
 
-    //goes back to the home grouop activity when u click the back button
+    //goes back to the home group activity when u click the back button
     @Override
     public void onBackPressed(){
         Intent i =new Intent(this, HomeGroupActivity.class);
