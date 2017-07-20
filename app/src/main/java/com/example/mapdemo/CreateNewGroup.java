@@ -34,6 +34,7 @@ public class CreateNewGroup extends AppCompatActivity {
             public void onClick(View v) {
                 String grpname =String.valueOf(edGroupName.getText());
 
+                //putting group name, group id and adding these values to the current app user
                 i.putExtra("grpName", grpname);
                 try{
                     ParseObject newGrp=new ParseObject("Groups");
