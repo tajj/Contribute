@@ -1,39 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#ffffffff"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
     <ImageView
         android:id="@+id/ivMarkerPhoto"
-        android:layout_width="match_parent"
-        android:layout_height="297dp"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />
+        android:layout_width="wrap_content"
+        android:layout_height="220dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/placeholder"
+        android:layout_alignStart="@+id/ibUploadPic"
+        android:layout_alignParentEnd="true" />
 
     <ImageButton
         android:id="@+id/ibUploadPic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="#ffffffff"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/cameraicon" />
+        android:layout_marginRight="10dp"
+        app:srcCompat="@drawable/markerdetails_takepic"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/ivMarkerPhoto"
+        android:layout_alignStart="@+id/tvTitle" />
+    <ImageButton
+        android:id="@+id/ibPost"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="#ffffffff"
+        android:scaleType="fitXY"
+        android:layout_marginRight="10dp"
+        app:srcCompat="@drawable/ic_vector_messages"
+        android:layout_alignTop="@+id/share_btn"
+        android:layout_alignParentEnd="true" />
 
     <ImageButton
         android:id="@+id/ibGalleryPic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:onClick="onPickPhoto"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/ic_vector_photo" />
+        android:layout_marginRight="10dp"
+        app:srcCompat="@drawable/markerdetails_uploadpic"
+        android:layout_above="@+id/tvTitle"
+        android:layout_toEndOf="@+id/ibUploadPic" />
 
     <TextView
         android:id="@+id/tvTitle"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ibUploadPic"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="18dp"
+        android:text="TextView"
+        android:textColor="#5DBCD2"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/tvSnippet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvTitle"
+        android:layout_marginLeft="8dp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="TextView"
+        android:textSize="16sp" />
 
-</LinearLayout>
+    <com.facebook.share.widget.ShareButton
+        android:id="@+id/share_btn"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/share"
+        android:layout_alignTop="@+id/ibGalleryPic"
+        android:layout_alignParentEnd="true" />
+
+
+</RelativeLayout>
