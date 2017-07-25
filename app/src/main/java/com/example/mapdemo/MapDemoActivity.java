@@ -66,6 +66,7 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 // this refresh button is the next best option.
 // 4. code that supports deleting a marker (locally AND from parse -- it persists across devices) when you drag & drop it somewhere else
 // 5. code that supports adding a marker (locally AND to parse -- it persists across devices)
+// 6. back button goes back to HomeGroupActivity.
 
 @RuntimePermissions
 public class MapDemoActivity extends AppCompatActivity implements
@@ -626,5 +627,11 @@ public class MapDemoActivity extends AppCompatActivity implements
         // Cleanup before next query & remove visibility
         etSearchQuery.setText("");
         etSearchQuery.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent homeGroupIntent = new Intent(MapDemoActivity.this, HomeGroupActivity.class);
+        startActivity(homeGroupIntent);
     }
 }
