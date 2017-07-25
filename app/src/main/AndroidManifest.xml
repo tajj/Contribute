@@ -96,7 +96,6 @@
         <uses-library
             android:name="com.google.android.maps"
             android:required="true" />
-        android:required="true" />
 
         <activity android:name=".MarkerDetailsActivity"></activity>
         <activity android:name=".PostCommentActivity"></activity>
@@ -111,7 +110,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-  <activity android:name=".SelectGroupMembers" />
+        <activity android:name=".SelectGroupMembers" />
         <activity android:name=".CreateNewGroup" />
         <activity android:name=".SecretSeenAds" />
         <activity android:name=".AboutActivity"></activity>
