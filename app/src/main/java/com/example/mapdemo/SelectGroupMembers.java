@@ -30,7 +30,7 @@ public class SelectGroupMembers extends AppCompatActivity {
         Intent i=getIntent();
         final String grpName=i.getExtras().getString("grpName");
         final String grpId=i.getExtras().getString("grpId");
-        final ListView listview=(ListView)findViewById(R.id.usersList); //TODO add to xml,create groupname
+        final ListView listview=(ListView)findViewById(R.id.usersList);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserFriends");
         query.whereEqualTo("userId", ParseUser.getCurrentUser().getEmail());
         final ArrayList<String> list = new ArrayList<String>();
@@ -56,6 +56,8 @@ public class SelectGroupMembers extends AppCompatActivity {
                             userids[count]=(String) groups.get("friendUserId");
                             count++;
                         }
+                        //notify adapter
+                        //listAdapter.notifyDataSetChanged();
 
                         listview.setAdapter(listAdapter);
                         listview.setTextFilterEnabled(true);
@@ -63,7 +65,9 @@ public class SelectGroupMembers extends AppCompatActivity {
                     } else {
                         Log.d("score", "Error: " + e.getMessage());
                     }
+                    listAdapter.notifyDataSetChanged();
                     if (scoreList.size() == 0)
+                        Log.d("score", "no friends ");
                         Toast.makeText(getApplicationContext(), "You do not have any friends to join you :/", Toast.LENGTH_LONG).show();
                 }
             });

@@ -98,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                         if (user == null) {
+                            System.out.println("user: " + user);
                             Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
                         } else if (user.isNew()) {
                             Log.d("MyApp", "User signed up and logged in through Facebook!");
@@ -134,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
 
             public void onClick(View v) {
                 if (count !=0) {
-                    Intent i = new Intent(LoginActivity.this, HomeGroupActivity.class);
+                    Intent i = new Intent(LoginActivity.this, AboutActivity.class);
                     startActivity(i);
                 }
                     finish();
