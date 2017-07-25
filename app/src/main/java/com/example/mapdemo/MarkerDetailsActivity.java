@@ -110,7 +110,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         // setup RV -- layout manager & setup w adapter
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
-        // groupID = (from appropriate intent);
+        groupID = getIntent().getStringExtra("groupId");
 
         // loading photo file based on LOCATION from Parse
         ParseQuery<ParseObject> query  = ParseQuery.getQuery("ParseImageArrays");
