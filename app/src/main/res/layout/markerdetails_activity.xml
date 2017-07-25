@@ -8,13 +8,11 @@
 
     <ImageView
         android:id="@+id/ivMarkerPhoto"
-        android:layout_width="wrap_content"
+        android:layout_width="380dp"
         android:layout_height="220dp"
         android:layout_marginTop="10dp"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/placeholder"
-        android:layout_alignStart="@+id/ibUploadPic"
-        android:layout_alignParentEnd="true" />
+        app:srcCompat="@drawable/placeholder" />
 
     <ImageButton
         android:id="@+id/ibUploadPic"
@@ -27,16 +25,6 @@
         android:layout_marginTop="20dp"
         android:layout_below="@+id/ivMarkerPhoto"
         android:layout_alignStart="@+id/tvTitle" />
-    <ImageButton
-        android:id="@+id/ibPost"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="#ffffffff"
-        android:scaleType="fitXY"
-        android:layout_marginRight="10dp"
-        app:srcCompat="@drawable/ic_vector_messages"
-        android:layout_alignTop="@+id/share_btn"
-        android:layout_alignParentEnd="true" />
 
     <ImageButton
         android:id="@+id/ibGalleryPic"
@@ -48,7 +36,7 @@
         android:layout_marginRight="10dp"
         app:srcCompat="@drawable/markerdetails_uploadpic"
         android:layout_above="@+id/tvTitle"
-        android:layout_toEndOf="@+id/ibUploadPic" />
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/tvTitle"
@@ -60,7 +48,7 @@
         android:layout_marginTop="18dp"
         android:text="TextView"
         android:textColor="#5DBCD2"
-        android:textSize="20sp" />
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/tvSnippet"
@@ -73,14 +61,55 @@
         android:text="TextView"
         android:textSize="16sp" />
 
+    <ImageButton
+        android:id="@+id/ibComment"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="110dp"
+        android:layout_marginRight="100dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/markerdetails_comment"
+        android:layout_above="@+id/tvTitle" />
+
     <com.facebook.share.widget.ShareButton
         android:id="@+id/share_btn"
         android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/share"
+        android:contentDescription="Share"
         android:layout_alignTop="@+id/ibGalleryPic"
         android:layout_alignParentEnd="true" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvComments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvComments"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/tvComments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Comments"
+        android:textColor="#5DBCD2"
+        android:textSize="22sp"
+        android:layout_below="@+id/tvSnippet"
+        android:layout_alignStart="@+id/tvSnippet" />
+
+    <ImageButton
+        android:id="@+id/ibPost"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="120dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/comment_share"
+        android:layout_marginEnd="39dp"
+        android:layout_alignTop="@+id/share_btn"
+        android:layout_toStartOf="@+id/share_btn" />
 
 
 </RelativeLayout>
