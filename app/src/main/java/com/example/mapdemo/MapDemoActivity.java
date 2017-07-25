@@ -108,6 +108,9 @@ public class MapDemoActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_demo_activity);
 
+        // get right groupID
+        groupID = getIntent().getStringExtra("groupId");
+
         // initialize list of markers
         markerList = new ArrayList<>();
 
