@@ -1,6 +1,5 @@
 package com.example.mapdemo;
 
-import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +9,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +34,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -47,6 +50,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     public final String APP_TAG = "SeenAds";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public final static int PICK_PHOTO_CODE = 1046;
+    public final static int COMMENT_CODE = 1058;
 
     public boolean parseFlag = false;
 
@@ -67,27 +71,30 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     TextView tvSnippet;
     ImageButton ibUploadPic;
     ImageButton ibGalleryPic;
-    ImageButton ibPost;
+    ImageButton ibComment;
+    ImageButton ibPost; // TODO right now add to appropriate .xml
     ImageView ivMarkerPhoto;
+
+    // Share
+    private ShareButton shareButton;
+    private Bitmap image;
+    private int counter = 0;
+
+    // Hmm...
+    String markerID;
 
     // Later if we get to it
     RecyclerView rvComments;
-
-    // share button
-    private ShareButton shareButton;
-    //image
-    private Bitmap image;
-    //counter
-    private int counter = 0;
-
+    CommentAdapter commentAdapter;
+    ArrayList<Comment> comments;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //initialize facebook sdk
-        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.markerdetails_activity);
+        // initialize FB SDK for share
+        FacebookSdk.sdkInitialize(getApplicationContext());
         // retrieve intent & setup
         String ID = getIntent().getStringExtra("title");
         String snippet = getIntent().getStringExtra("snippet");
@@ -97,16 +104,21 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvSnippet = (TextView) findViewById(R.id.tvSnippet);
         ivMarkerPhoto = (ImageView) findViewById(R.id.ivMarkerPhoto);
-        // rvComments = (RecyclerView) findViewById(R.id.rvComments);
+        comments = new ArrayList<>();
+        commentAdapter = new CommentAdapter(comments);
+        rvComments = (RecyclerView) findViewById(R.id.rvComments);
+        // setup RV -- layout manager & setup w adapter
+        rvComments.setLayoutManager(new LinearLayoutManager(this));
+        rvComments.setAdapter(commentAdapter);
         // groupID = (from appropriate intent);
 
         // loading photo file based on LOCATION from Parse
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseImageArrays");
+        ParseQuery<ParseObject> query  = ParseQuery.getQuery("ParseImageArrays");
         query.whereEqualTo("Location", location);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
-                if (e == null) {
+                if (e==null){
                     int size = parseObjects.size();
                     parseFlag = true;
                     // TODO figure out a way to handle duplicate images LATER
@@ -125,7 +137,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                         // load it into the image view
                         String firstItemId = parseObjects.get(size - 1).getObjectId();
                         Toast.makeText(MarkerDetailsActivity.this, "Loading from PARSE: object " + firstItemId, Toast.LENGTH_SHORT).show();
-
                     }
                     // else don't load any image & wait for the user to upload one
                 } else {
@@ -137,8 +148,8 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         // if there's already a path to the corresponding picture for this marker, load it instead of the placeholder image
         if (!parseFlag) { // TODO figure out how to fix double loading -- local & parse loading happen asynchronously so flag isn't useful
             // possible solution ^: multiple threads?
-            File imgFile = new File(ABSOLUTE_FILE_PATH + photoFileName);
-            if (imgFile.exists()) {
+            File imgFile = new  File(ABSOLUTE_FILE_PATH + photoFileName);
+            if(imgFile.exists()){
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 ivMarkerPhoto.setImageBitmap(myBitmap);
             }
@@ -153,6 +164,44 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             }
         });
 
+        // Upload picture from gallery (onClickListener is set in .xml b/c permissions not required)
+        ibGalleryPic = (ImageButton) findViewById(R.id.ibGalleryPic);
+
+        // Post a comment
+        ibComment = (ImageButton) findViewById(R.id.ibComment);
+        ibComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO pass in username from groupID, etc. with the intent --> actually may not need to do that
+                Intent postCommentIntent = new Intent(getApplicationContext(), PostCommentActivity.class);
+                startActivityForResult(postCommentIntent, COMMENT_CODE);
+            }
+        });
+
+        markerID = ID + snippet;
+        // loading COMMENTS from Parse (can double-query for safety later)
+        ParseQuery<ParseObject> query2  = ParseQuery.getQuery("Comment");
+        query2.whereEqualTo("markerID", markerID);
+        query2.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                if (e == null) {
+                    int size = parseObjects.size();
+                    for (int i = 0; i < size; i++) {
+                        ParseObject current = parseObjects.get(i);
+                        // String username = current.getString("userID");
+                        // String groupID = current.getString("groupID");
+                        String body = current.getString("body");
+                        String timestamp = current.getString("timestamp");
+                        Comment curr = new Comment(body, "fake username".toUpperCase() + " AT " + timestamp, timestamp);
+                        comments.add(curr);
+                        commentAdapter.notifyItemInserted(comments.size() - 1);
+                    }
+                }
+            }
+        });
+        // safety/sanity
+        commentAdapter.notifyDataSetChanged();
         // POST AFTER SCREENSHOT
         ibPost = (ImageButton) findViewById(R.id.ibPost);
         ibPost.setOnClickListener(new View.OnClickListener() {
@@ -173,14 +222,11 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             }
         });
 
-        // Upload picture from gallery (onClickListener is set in .xml b/c permissions not required)
-        ibGalleryPic = (ImageButton) findViewById(R.id.ibGalleryPic);
 
         // set information
         tvTitle.setText(ID);
         tvSnippet.setText(snippet);
 
-        //share button
         shareButton = (ShareButton) findViewById(R.id.share_btn);
         shareButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -237,10 +283,28 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         MarkerDetailsActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == COMMENT_CODE) {
+            if (data != null) { // if the user did not hit the cancel button
+                String body = data.getStringExtra("commentBody");
+                String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
+                // TODO username to uppercase for consistency
+                Comment comment = new Comment(body, "fake username".toUpperCase() + " AT " + timeStamp, timeStamp);
+                comments.add(comment);
+                commentAdapter.notifyDataSetChanged();
+                rvComments.scrollToPosition(0);
+                // Put the comment into Parse under the Comment class
+                ParseObject testObject = new ParseObject("Comment");
+                testObject.put("body", body);
+                testObject.put("timestamp", timeStamp);
+                testObject.put("markerID", markerID);
+                // testObject.put("userID", userID);
+                // testObject.put("groupID", groupID);
+                testObject.saveInBackground();
+            }
+        }
+        else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Uri takenPhotoUri = getPhotoFileUri(photoFileName);
                 // by this point we have the camera photo on disk
@@ -249,7 +313,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 // Configure byte output stream
                 stream = new ByteArrayOutputStream();
                 // Compress the image further
-                takenImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                resizedImage.compress(Bitmap.CompressFormat.JPEG, 70, stream);
 
                 // Save image to Parse
                 byte[] image = stream.toByteArray();
@@ -281,20 +345,27 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 // Load the resized image into a preview
-                ivMarkerPhoto.setImageBitmap(takenImage);
+                ivMarkerPhoto.setImageBitmap(resizedImage);
             } else { // Result was a failure
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
 
-        if (requestCode == PICK_PHOTO_CODE && data != null) {
+        else if (data != null) {
             Uri photoUri = data.getData();
             // Do something with the photo based on Uri
             Bitmap selectedImage = null;
             try {
-                selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+                if (photoUri != null) {
+                    selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+
+            // if user cancels share to FB, get out of method
+            if (selectedImage == null) {
+                return;
             }
 
             Bitmap resizedImage = BitmapScaler.scaleToFitWidth(selectedImage, 430);
@@ -337,16 +408,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         } else { // Result was a failure OR you loaded from camera directly instead
             // Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }
-
-//        String text = "Look at my awesome picture";
-//        Uri photoUri = Uri.parse("file://my_picture");
-//        Intent shareIntent = new Intent();
-//        shareIntent.setAction(Intent.ACTION_SEND);
-//        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
-//        shareIntent.putExtra(Intent.EXTRA_STREAM, getPhotoFileUri(photoFileName));
-//        shareIntent.setType("image/*");
-//        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//        startActivity(Intent.createChooser(shareIntent, "Share images..."));
     }
 
     // Returns the Uri for a photo stored on disk given the fileName
@@ -374,4 +435,3 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         return state.equals(Environment.MEDIA_MOUNTED);
     }
 }
-
