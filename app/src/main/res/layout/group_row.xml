@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tvGroupRow"
     android:layout_width="fill_parent"
-    android:layout_height="30dp" >
-    android:padding="10dp"
-    android:textSize="50sp" >
+    android:layout_height="40dp"
+    android:padding="40dp"
+    android:background="@drawable/group_row_border"
+    android:textSize="50dp" >
 
 </TextView>

@@ -7,13 +7,12 @@
 
 
     <ListView
-        android:id="@+id/groupslist"
+        android:id="@+id/lvGroupsList"
         android:layout_width="match_parent"
         android:layout_height="450dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
 
-        >
+        android:layout_below="@+id/btnDelete"
+        android:layout_alignParentStart="true">
     </ListView>
 
     <Button
@@ -22,6 +21,8 @@
         android:layout_height="wrap_content"
         android:text="Delete"
         android:layout_alignParentTop="true"
+        android:background="@color/com_facebook_blue"
+        android:textColor="@android:color/white"
         android:layout_alignParentEnd="true" />
 
     <Button
@@ -30,7 +31,18 @@
         android:layout_height="wrap_content"
         android:text="Add"
         android:layout_alignParentTop="true"
+        android:background="@color/com_facebook_blue"
+android:textColor="@android:color/white"
         android:layout_toStartOf="@+id/btnDelete" />
+
+    <Button
+        android:id="@+id/tvSecretSeenAds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:alpha="0"
+        style="?android:attr/borderlessButtonStyle"/>
 
 
 </RelativeLayout>
