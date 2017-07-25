@@ -39,14 +39,16 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LoginActivity extends AppCompatActivity {
 
-    CircleImageView mProfileImage;
-    Button mBtnFb;
-    Button btnProceed;
-    TextView mUsername, mEmailID;
+    //CircleImageView mProfileImage;
+    //Button mBtnFb;
+    //Button btnProceed;
+    //TextView mUsername, mEmailID;
     Profile mFbProfile;
     ParseUser parseUser;
     int count =0;
@@ -59,18 +61,26 @@ public class LoginActivity extends AppCompatActivity {
     }};
 
     //use butterknife
+    @BindView(R.id.btn_fb_login) Button mBtnFb;
+    @BindView(R.id.btnProceed) Button btnProceed;
+    @BindView(R.id.profile_image) CircleImageView mProfileImage;
+    @BindView(R.id.txt_name) TextView mUsername;
+    @BindView(R.id.txt_email) TextView mEmailID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
 
-        mBtnFb = (Button) findViewById(R.id.btn_fb_login);
-        mProfileImage = (CircleImageView) findViewById(R.id.profile_image);
 
-        btnProceed = (Button) findViewById(R.id.btnProceed);
+        //mBtnFb = (Button) findViewById(R.id.btn_fb_login);
+        //mProfileImage = (CircleImageView) findViewById(R.id.profile_image);
 
-        mUsername = (TextView) findViewById(R.id.txt_name);
-        mEmailID = (TextView) findViewById(R.id.txt_email);
+       // btnProceed = (Button) findViewById(R.id.btnProceed);
+
+       // mUsername = (TextView) findViewById(R.id.txt_name);
+       // mEmailID = (TextView) findViewById(R.id.txt_email);
 
         mFbProfile = Profile.getCurrentProfile();
 

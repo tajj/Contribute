@@ -12,19 +12,26 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class CreateNewGroup extends AppCompatActivity {
 
-    EditText edGroupName;
-    Button btnCreateGroup;
+    //EditText edGroupName;
+    //Button btnCreateGroup;
     Intent i;
+
+    @BindView(R.id.btnCreateGroup) Button btnCreateGroup;
+    @BindView(R.id.edGroupName) EditText edGroupName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_group);
 
-        btnCreateGroup=(Button)findViewById(R.id.btnCreateGroup);
-        edGroupName=(EditText)findViewById(R.id.edGroupName);
+        //btnCreateGroup=(Button)findViewById(btnCreateGroup);
+        //edGroupName=(EditText)findViewById(R.id.edGroupName);
+        ButterKnife.bind(this);
         i=new Intent(CreateNewGroup.this, SelectGroupMembers.class);
 
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {

@@ -9,7 +9,7 @@
 
     <!-- View border color and width -->
     <stroke
-        android:width="80dp"
+        android:width="3dp"
         android:color="@color/com_facebook_blue" >
     </stroke>
 

@@ -31,7 +31,10 @@ public class SelectGroupMembers extends AppCompatActivity {
         final String grpName=i.getExtras().getString("grpName");
         final String grpId=i.getExtras().getString("grpId");
         final ListView listview=(ListView)findViewById(R.id.usersList);
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("UserFriends");
+        //ParseQuery<ParseObject> query = ParseQuery.getQuery("UserFriends");
+        //TODO if change all parseuser to parseobject as shown above
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+
         query.whereEqualTo("userId", ParseUser.getCurrentUser().getEmail());
         final ArrayList<String> list = new ArrayList<String>();
 
@@ -43,8 +46,8 @@ public class SelectGroupMembers extends AppCompatActivity {
         final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.group_row, list);
         try{
 
-            query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> scoreList, com.parse.ParseException e) {
+            query.findInBackground(new FindCallback<ParseUser>() {
+                public void done(List<ParseUser> scoreList, com.parse.ParseException e) {
                     if (e == null) {
                         //Log.d("score", "Retrieved " + scoreList.size() + " scores");
                         userids = new String[scoreList.size()];
