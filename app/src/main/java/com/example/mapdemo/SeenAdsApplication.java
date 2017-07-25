@@ -25,6 +25,7 @@ public class SeenAdsApplication extends Application {
         // TODO register more subclasses (probably one for photo if that's not included within marker)
 
         // this could be useless for now
+        // ParseObject.registerSubclass(MarkerInfo.class);
        // ParseObject.registerSubclass(MarkerInfo.class);
         // Use for monitoring Parse network traffic
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -53,4 +54,3 @@ public class SeenAdsApplication extends Application {
 
     }
 }
-
