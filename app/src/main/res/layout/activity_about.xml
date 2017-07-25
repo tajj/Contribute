@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Welcome. This app is for sharing media with a group of people based on location. You can create a group of users and share a map with them, pinning a location to the map and posting a photo, text. You can also comment on different pins. Enjoy! Created by Alex Madera, Taylor Jean-Jacques and Maya Jeyndran."
+                android:text="Welcome. This app is for sharing media with a group of people based on location. You can create a group of users and share a map with them, pinning a location to the map and posting a photo, text. You can also comment on different pins. Enjoy! Created by Alex Madera, Taylor Jean-Jacques and Maya Jeyendran."
                 android:textColor="@color/com_facebook_blue" />
 
 
