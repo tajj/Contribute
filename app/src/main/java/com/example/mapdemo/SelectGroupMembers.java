@@ -35,7 +35,7 @@ public class SelectGroupMembers extends AppCompatActivity {
 
         //ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
         ParseQuery<ParseUser> query = ParseUser.getQuery();
-        //query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
+        query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
        //query.whereNotEqualTo("email", ParseUser.getCurrentUser().getEmail());
 
         final ArrayList<String> list = new ArrayList<String>();
