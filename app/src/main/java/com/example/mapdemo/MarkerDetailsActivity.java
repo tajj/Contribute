@@ -82,6 +82,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
 
     // Hmm...
     String markerID;
+    String fullName;
 
     // Later if we get to it
     RecyclerView rvComments;
@@ -100,6 +101,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         String snippet = getIntent().getStringExtra("snippet");
         snip = snippet;
         location = getIntent().getStringExtra("location");
+        fullName = getIntent().getStringExtra("fullName");
         photoFileName = photoFileName + ID;
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvSnippet = (TextView) findViewById(R.id.tvSnippet);
@@ -110,7 +112,10 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         // setup RV -- layout manager & setup w adapter
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
+        // NULL for now, not being passed through yet
         groupID = getIntent().getStringExtra("groupId");
+
+
 
         // loading photo file based on LOCATION from Parse
         ParseQuery<ParseObject> query  = ParseQuery.getQuery("ParseImageArrays");
@@ -290,7 +295,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 String body = data.getStringExtra("commentBody");
                 String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
                 // TODO username to uppercase for consistency
-                Comment comment = new Comment(body, "fake username".toUpperCase() + " AT " + timeStamp, timeStamp);
+                Comment comment = new Comment(body, fullName.toUpperCase() + " AT " + timeStamp, timeStamp);
                 comments.add(comment);
                 commentAdapter.notifyDataSetChanged();
                 rvComments.scrollToPosition(0);
