@@ -32,6 +32,7 @@ public class HomeGroupActivity extends AppCompatActivity {
     //these are going to hold all the group ids, names and dates in one place: an array
     String[] groupID;
     String[] groupNAME;
+    String fullName;
    // Date[] grpDate;
 
     @BindView(R.id.btnAdd)Button btnAdd;
@@ -43,6 +44,7 @@ public class HomeGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homegroup_activity);
         ButterKnife.bind(this);
+        fullName = getIntent().getStringExtra("fullName");
 
         //ParseUser currentUser = ParseUser.getCurrentUser();
         //btnAdd = (Button) findViewById(R.id.btnAdd);
@@ -97,8 +99,6 @@ public class HomeGroupActivity extends AppCompatActivity {
         catch(Exception e){
             Log.e("exception:", e.toString());
         }
-
-        final String fullName = getIntent().getStringExtra("fullName");
 
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
