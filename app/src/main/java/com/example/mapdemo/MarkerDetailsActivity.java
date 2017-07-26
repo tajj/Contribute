@@ -112,11 +112,9 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         // setup RV -- layout manager & setup w adapter
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
-        // NULL for now, not being passed through yet
         groupID = getIntent().getStringExtra("groupID");
 
 
-        // loading photo file based on LOCATION from Parse
         ParseQuery<ParseObject> query  = ParseQuery.getQuery("ParseImageArrays");
         query.whereEqualTo("Location", location);
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -126,22 +124,25 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                     int size = parseObjects.size();
                     parseFlag = true;
                     // TODO figure out a way to handle duplicate images LATER
-                    // if there's something at this location already, load the most recent image (assuming size of list is one, but handling other possibilities)
+                    // if there's something at this location already, load the one that matches the current group
                     if (size > 0) {
-                        ParseObject match = parseObjects.get(size - 1);
-                        String checkGroupID = String.valueOf(match.get("groupID"));
-                        if (checkGroupID.equals(groupID)) {
-                            ParseFile imgFile = match.getParseFile("MarkerImage");
-                            // get the URL
-                            String imgFileUrl = imgFile.getUrl();
-                            // load using Glide
-                            Glide.with(getApplicationContext())
-                                    .load(imgFileUrl)
-                                    .bitmapTransform(new RoundedCornersTransformation(MarkerDetailsActivity.this, 10, 5))
-                                    .into(ivMarkerPhoto);
-                            // load it into the image view
-                            String firstItemId = parseObjects.get(size - 1).getObjectId();
-                            Toast.makeText(MarkerDetailsActivity.this, "Loading from PARSE: object " + firstItemId, Toast.LENGTH_SHORT).show();
+                        // pretty much the safest way to avoid collisions ever
+                        for (int i = 0; i < size; i++) {
+                            ParseObject match = parseObjects.get(i);
+                            String checkGroupID = String.valueOf(match.get("groupID"));
+                            if (checkGroupID.equals(groupID)) {
+                                ParseFile imgFile = match.getParseFile("MarkerImage");
+                                // get the URL
+                                String imgFileUrl = imgFile.getUrl();
+                                // load using Glide
+                                Glide.with(getApplicationContext())
+                                        .load(imgFileUrl)
+                                        .bitmapTransform(new RoundedCornersTransformation(MarkerDetailsActivity.this, 10, 5))
+                                        .into(ivMarkerPhoto);
+                                // load it into the image view
+                                String itemConfirmID = parseObjects.get(i).getObjectId();
+                                Toast.makeText(MarkerDetailsActivity.this, "Loading from PARSE: object " + itemConfirmID, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                     // else don't load any image & wait for the user to upload one
