@@ -33,10 +33,12 @@ public class SelectGroupMembers extends AppCompatActivity {
         final String grpId=i.getExtras().getString("grpId");
         final ListView listview=(ListView)findViewById(R.id.usersList);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
-        //ParseQuery<ParseObject> query = ParseObject.getQuery();
-        //query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
-        query.whereNotEqualTo("email", ParseUser.getCurrentUser().getEmail());
+        //ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
+        //query.whereNotEqualTo("username", "mT1pv9n4PWaFMFvbDzMV8QxBn");
+
+       //query.whereNotEqualTo("email", ParseUser.getCurrentUser().getEmail());
 
         final ArrayList<String> list = new ArrayList<String>();
 
@@ -50,17 +52,17 @@ public class SelectGroupMembers extends AppCompatActivity {
 
         try{
 
-            query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> scoreList, com.parse.ParseException e) {
+            query.findInBackground(new FindCallback<ParseUser>() {
+                public void done(List<ParseUser> scoreList, com.parse.ParseException e) {
                     if (e == null) {
                         //Log.d("score", "Retrieved " + scoreList.size() + " scores");
                         userids = new String[scoreList.size()];
                         int count = 0;
                         //adding users to list
-                        for (ParseObject groups : scoreList) {
-                            list.add((String) groups.get("objectId"));
+                        for (ParseUser groups : scoreList) {
+                            list.add((String) groups.get("username"));
 
-                            userids[count]=(String) groups.get("objectId");
+                            userids[count]=(String) groups.get("username");
                             count++;
                         }
                         //notify adapter
@@ -75,7 +77,7 @@ public class SelectGroupMembers extends AppCompatActivity {
 //                    listAdapter.notifyDataSetChanged();
                     if (scoreList.size() == 0)
                         Log.d("score", "no friends ");
-                        Toast.makeText(getApplicationContext(), "You do not have any friends to join you :/", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(getApplicationContext(), "You do not have any friends to join you :/", Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -96,11 +98,11 @@ public class SelectGroupMembers extends AppCompatActivity {
                     ParseObject addUsr=new ParseObject("UserConnections");
                     addUsr.put("groupName", grpName);
                     addUsr.put("userGroup", grpId);
-                    addUsr.put("userId", userids[position]);
+                    addUsr.put("username", userids[position]);
                     addUsr.save();
                     Toast.makeText(getApplicationContext(), "Member added to Group", Toast.LENGTH_LONG).show();
                 } catch (ParseException e) {
-                    Log.e("error:", e.getMessage());
+                    Log.d("error:", e.getMessage());
                 }
             }
         });

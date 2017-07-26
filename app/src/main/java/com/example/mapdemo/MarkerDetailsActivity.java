@@ -43,6 +43,13 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
+// this file has been created & primarily maintained by Maya. Here's what's going on:
+// 1. Loading images from parse & local storage. Need to change this to threads if time permits to ideally & completely solve
+// network failure issue.
+// 2. Loading images from gallery (Alex did this).
+// 3. Ability to post a comment & have your username linked to said comment. Comments persist as well.
+// 4. A lot of safety querying to make sure that unique and correct images & comments are loaded for each marker (based on, but not limited to, finding the correct & current group, location, and description).
+
 @ParseClassName("MarkerDetailsActivity")
 @RuntimePermissions
 public class MarkerDetailsActivity extends AppCompatActivity {
@@ -112,12 +119,11 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         // setup RV -- layout manager & setup w adapter
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
-        // NULL for now, not being passed through yet
-        groupID = getIntent().getStringExtra("groupId");
-
+        groupID = getIntent().getStringExtra("groupID");
 
         // loading photo file based on LOCATION from Parse
         ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseImageArrays");
+
         query.whereEqualTo("Location", location);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -126,21 +132,26 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                     int size = parseObjects.size();
                     parseFlag = true;
                     // TODO figure out a way to handle duplicate images LATER
-                    // if there's something at this location already, load the most recent image (assuming size of list is one, but handling other possibilities)
+                    // if there's something at this location already, load the one that matches the current group
                     if (size > 0) {
-                        ParseObject match = parseObjects.get(size - 1);
-                        // get the image file
-                        ParseFile imgFile = match.getParseFile("MarkerImage");
-                        // get the URL
-                        String imgFileUrl = imgFile.getUrl();
-                        // load using Glide
-                        Glide.with(getApplicationContext())
-                                .load(imgFileUrl)
-                                .bitmapTransform(new RoundedCornersTransformation(MarkerDetailsActivity.this, 10, 5))
-                                .into(ivMarkerPhoto);
-                        // load it into the image view
-                        String firstItemId = parseObjects.get(size - 1).getObjectId();
-                        Toast.makeText(MarkerDetailsActivity.this, "Loading from PARSE: object " + firstItemId, Toast.LENGTH_SHORT).show();
+                        // pretty much the safest way to avoid collisions ever
+                        for (int i = 0; i < size; i++) {
+                            ParseObject match = parseObjects.get(i);
+                            String checkGroupID = String.valueOf(match.get("groupID"));
+                            if (checkGroupID.equals(groupID)) {
+                                ParseFile imgFile = match.getParseFile("MarkerImage");
+                                // get the URL
+                                String imgFileUrl = imgFile.getUrl();
+                                // load using Glide
+                                Glide.with(getApplicationContext())
+                                        .load(imgFileUrl)
+                                        .bitmapTransform(new RoundedCornersTransformation(MarkerDetailsActivity.this, 10, 5))
+                                        .into(ivMarkerPhoto);
+                                // load it into the image view
+                                String itemConfirmID = parseObjects.get(i).getObjectId();
+                                Toast.makeText(MarkerDetailsActivity.this, "Loading from PARSE: object " + itemConfirmID, Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
                     // else don't load any image & wait for the user to upload one
                 } else {
@@ -193,13 +204,16 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                     int size = parseObjects.size();
                     for (int i = 0; i < size; i++) {
                         ParseObject current = parseObjects.get(i);
-                        // String username = current.getString("userID");
-                        // String groupID = current.getString("groupID");
-                        String body = current.getString("body");
-                        String timestamp = current.getString("timestamp");
-                        Comment curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
-                        comments.add(curr);
-                        commentAdapter.notifyItemInserted(comments.size() - 1);
+                        // double query
+                        String checkGroupID = String.valueOf(current.get("groupID"));
+                        if (checkGroupID.equals(groupID)) {
+                            // String username = current.getString("userID");
+                            String body = current.getString("body");
+                            String timestamp = current.getString("timestamp");
+                            Comment curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
+                            comments.add(curr);
+                            commentAdapter.notifyItemInserted(comments.size() - 1);
+                        }
                     }
                 }
             }
@@ -326,8 +340,9 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 testObject.put("body", body);
                 testObject.put("timestamp", timeStamp);
                 testObject.put("markerID", markerID);
+                // safety
+                testObject.put("groupID", groupID);
                 // testObject.put("userID", userID);
-                // testObject.put("groupID", groupID);
                 testObject.saveInBackground();
             }
         } else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -339,7 +354,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 // Configure byte output stream
                 stream = new ByteArrayOutputStream();
                 // Compress the image further
-                resizedImage.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+                resizedImage.compress(Bitmap.CompressFormat.JPEG, 78, stream);
 
                 // Save image to Parse
                 byte[] image = stream.toByteArray();
@@ -356,6 +371,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 // For retrieval of images; check if the Parse location matches the current marker's location for loading
                 testObject.put("Snippet", snip);
                 testObject.put("Location", location);
+                testObject.put("groupID", groupID);
                 testObject.saveInBackground();
 
                 // Create a new file for the resized bitmap (`getPhotoFileUri` defined above)
@@ -427,6 +443,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                     // Load the resized image into a preview
                     ivMarkerPhoto.setImageBitmap(selectedImage);
 
+
             // Save image to Parse
             byte[] image = stream.toByteArray();
             final ParseFile parseImage = new ParseFile(image);
@@ -442,6 +459,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             // For retrieval of images; check if the Parse location matches the current marker's location for loading
             testObject.put("Snippet", snip);
             testObject.put("Location", location);
+            testObject.put("groupID", groupID);
             testObject.saveInBackground();
 
             // Create a new file for the resized bitmap (`getPhotoFileUri` defined above)

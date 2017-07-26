@@ -207,6 +207,7 @@ public class MapDemoActivity extends AppCompatActivity implements
                     markerDetailsIntent.putExtra("snippet", marker.getSnippet());
                     markerDetailsIntent.putExtra("location", String.valueOf(marker.getPosition()));
                     markerDetailsIntent.putExtra("fullName", fullName);
+                    markerDetailsIntent.putExtra("groupID", groupID);
                     startActivity(markerDetailsIntent);
                     return false;
                 }
@@ -260,7 +261,6 @@ public class MapDemoActivity extends AppCompatActivity implements
                 public void onMarkerDragStart(Marker marker) {
                 }
             });
-            // TODO Load markers matching groupID (LATER) through Parse; currently just loading all of them with a null groupID
             ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
             query.whereEqualTo("groupID", groupID);
             query.findInBackground(new FindCallback<ParseObject>() {
