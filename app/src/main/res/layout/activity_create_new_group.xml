@@ -10,6 +10,7 @@
         android:textSize="32sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/twitter_blue"
         android:capitalize="characters"
         android:text="Create a Group:" />
 
@@ -22,9 +23,12 @@
 
     <Button
         android:id="@+id/btnCreateGroup"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/edGroupName"
-        android:text="Create Group"/>
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/edGroupName"
+        android:background="@android:color/transparent"
+        android:text="Create Group"
+        android:textColor="@color/accent" />
 
 </RelativeLayout>

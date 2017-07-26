@@ -11,7 +11,7 @@
     <ListView
         android:id="@+id/lvGroupsList"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_height="455dp"
 
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true">
@@ -36,7 +36,7 @@
         android:layout_marginTop="5dp"
         android:layout_alignParentTop="true"
         android:background="#ffffffff"
-        app:srcCompat="@drawable/markerdetails_takepic"
+        app:srcCompat="@drawable/maprefresh"
         android:layout_toStartOf="@+id/btnDelete" />
 
     <Button
@@ -53,8 +53,9 @@
         android:id="@+id/textView"
         android:layout_width="20dp"
         android:layout_height="wrap_content"
-        android:text="Your Groups:"
+        android:text="Your Groups"
         android:textSize="20dp"
+        android:textColor="@color/twitter_blue"
         android:gravity="center"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
