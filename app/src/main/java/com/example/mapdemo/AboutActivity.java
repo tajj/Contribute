@@ -21,6 +21,8 @@ public class AboutActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                     Intent i = new Intent(AboutActivity.this, HomeGroupActivity.class);
+                    String fullName = getIntent().getStringExtra("fullName");
+                    i.putExtra("fullName", fullName);
                     startActivity(i);
 
                 finish();
