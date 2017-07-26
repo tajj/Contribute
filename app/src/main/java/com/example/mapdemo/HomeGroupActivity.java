@@ -98,14 +98,17 @@ public class HomeGroupActivity extends AppCompatActivity {
             Log.e("exception:", e.toString());
         }
 
+        final String fullName = getIntent().getStringExtra("fullName");
 
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 ii.putExtra("groupId", groupID[position]);
                 ii.putExtra("groupName", groupNAME[position]);
+                ii.putExtra("fullName", fullName);
                // ii.putExtra("grpCreatedAt", grpDate[position]);
                 startActivity(ii);
                 finish();

@@ -82,6 +82,7 @@ public class MapDemoActivity extends AppCompatActivity implements
 
     // used for loading the correct markers; unwrap from HomeGroupActivity intent
     public String groupID = "";
+    String fullName;
 
     // Shake detection
     private SensorManager mSensorManager;
@@ -110,6 +111,7 @@ public class MapDemoActivity extends AppCompatActivity implements
 
         // get right groupID
         groupID = getIntent().getStringExtra("groupId");
+        fullName = getIntent().getStringExtra("fullName");
 
         // initialize list of markers
         markerList = new ArrayList<>();
@@ -204,6 +206,7 @@ public class MapDemoActivity extends AppCompatActivity implements
                     markerDetailsIntent.putExtra("title", marker.getTitle());
                     markerDetailsIntent.putExtra("snippet", marker.getSnippet());
                     markerDetailsIntent.putExtra("location", String.valueOf(marker.getPosition()));
+                    markerDetailsIntent.putExtra("fullName", fullName);
                     startActivity(markerDetailsIntent);
                     return false;
                 }
