@@ -38,12 +38,25 @@ android:textColor="@android:color/white"
 
     <Button
         android:id="@+id/tvSecretSeenAds"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/btnAdd" />
+
+    <TextView
+
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:text="Your Groups:"
+        android:textSize="25dp"
+        android:gravity="center"
         android:layout_alignParentTop="true"
-        android:alpha="0"
-        style="?android:attr/borderlessButtonStyle"/>
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/lvGroupsList"
+        android:layout_toStartOf="@+id/tvSecretSeenAds" />
 
 
 </RelativeLayout>
