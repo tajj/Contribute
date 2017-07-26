@@ -9,4 +9,5 @@
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
     android:visibility="visible"
-    tools:text="@string/app_name" />
+    tools:text="@string/app_name"
+    android:background="@drawable/group_row_border"/>

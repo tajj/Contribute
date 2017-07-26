@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SelectGroupMembers extends AppCompatActivity {
-    String[] userids; // ids of all users in parse
+    String[] userids = {""}; // ids of all users in parse
+    //ListView listview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +32,12 @@ public class SelectGroupMembers extends AppCompatActivity {
         final String grpName=i.getExtras().getString("grpName");
         final String grpId=i.getExtras().getString("grpId");
         final ListView listview=(ListView)findViewById(R.id.usersList);
-        //ParseQuery<ParseObject> query = ParseQuery.getQuery("UserFriends");
-        //TODO if change all parseuser to parseobject as shown above
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
 
-        query.whereEqualTo("userId", ParseUser.getCurrentUser().getEmail());
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+        //ParseQuery<ParseObject> query = ParseObject.getQuery();
+        //query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
+        query.whereNotEqualTo("email", ParseUser.getCurrentUser().getEmail());
+
         final ArrayList<String> list = new ArrayList<String>();
 
         //throwing in progress dialog...not necessary tho
@@ -44,36 +46,41 @@ public class SelectGroupMembers extends AppCompatActivity {
         pd.show();
 
         final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.group_row, list);
+        listview.setAdapter(listAdapter);
+
         try{
 
-            query.findInBackground(new FindCallback<ParseUser>() {
-                public void done(List<ParseUser> scoreList, com.parse.ParseException e) {
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> scoreList, com.parse.ParseException e) {
                     if (e == null) {
                         //Log.d("score", "Retrieved " + scoreList.size() + " scores");
                         userids = new String[scoreList.size()];
                         int count = 0;
                         //adding users to list
                         for (ParseObject groups : scoreList) {
-                            list.add((String) groups.get("friendUserId"));
+                            list.add((String) groups.get("objectId"));
 
-                            userids[count]=(String) groups.get("friendUserId");
+                            userids[count]=(String) groups.get("objectId");
                             count++;
                         }
                         //notify adapter
-                        //listAdapter.notifyDataSetChanged();
 
-                        listview.setAdapter(listAdapter);
                         listview.setTextFilterEnabled(true);
+                        listAdapter.notifyDataSetChanged();
                         pd.cancel();
+
                     } else {
                         Log.d("score", "Error: " + e.getMessage());
                     }
-                    listAdapter.notifyDataSetChanged();
+//                    listAdapter.notifyDataSetChanged();
                     if (scoreList.size() == 0)
                         Log.d("score", "no friends ");
                         Toast.makeText(getApplicationContext(), "You do not have any friends to join you :/", Toast.LENGTH_LONG).show();
                 }
             });
+
+
+
         }
         catch(Exception e){
             Log.e("exception:", e.toString());

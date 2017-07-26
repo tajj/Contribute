@@ -55,7 +55,7 @@ public class HomeGroupActivity extends AppCompatActivity {
 
         //creating query in parse for the users
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserConnections");
-        query.whereEqualTo("userId", ParseUser.getCurrentUser().getEmail());
+        query.whereEqualTo("email", ParseUser.getCurrentUser().getEmail());
 
         final ArrayList<String> list = new ArrayList<String>();
 
