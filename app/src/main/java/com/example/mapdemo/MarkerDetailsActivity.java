@@ -43,6 +43,13 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
+// this file has been created & primarily maintained by Maya. Here's what's going on:
+// 1. Loading images from parse & local storage. Need to change this to threads if time permits to ideally & completely solve
+// network failure issue.
+// 2. Loading images from gallery (Alex did this).
+// 3. Ability to post a comment & have your username linked to said comment. Comments persist as well.
+// 4. A lot of safety querying to make sure that unique and correct images & comments are loaded for each marker (based on, but not limited to, finding the correct & current group, location, and description).
+
 @ParseClassName("MarkerDetailsActivity")
 @RuntimePermissions
 public class MarkerDetailsActivity extends AppCompatActivity {
