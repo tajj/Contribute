@@ -12,9 +12,7 @@
         android:background="@android:color/transparent"
         android:scaleType="fitXY"
         app:srcCompat="@drawable/comment_post"
-        android:layout_marginEnd="15dp"
-        android:layout_below="@+id/etPostComment"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/etPostComment" />
 
     <EditText
         android:id="@+id/etPostComment"
