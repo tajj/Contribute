@@ -1,8 +1,14 @@
 package com.example.mapdemo;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -16,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -27,6 +34,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -37,11 +45,28 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
-
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
+// What's in this file? Since I (Maya) made a lot of changes and didn't write a lot of comments... the TLDR version is:
+// 0. the base map fragment (courtesy CodePath)
+// 1. connecting with a Shake Listener that, when you shake your phone while in this app, lets you change the type of map you see (i.e. Satellite, Hybrid, Road, etc.)
+// 2. a button to search (that is self-explanatory)
+// 3. a button to refresh (since markers are being loaded in loadMap(map) and are not updated in real-time (i.e. when someone else adds a marker, you won't be able to see it immediately b/c we don't have push notifications);
+// this refresh button is the next best option.
+// 4. code that supports deleting a marker (locally AND from parse -- it persists across devices) when you drag & drop it somewhere else
+// 5. code that supports adding a marker (locally AND to parse -- it persists across devices)
+// 6. back button goes back to HomeGroupActivity.
 
 @RuntimePermissions
 public class MapDemoActivity extends AppCompatActivity implements
@@ -53,6 +78,21 @@ public class MapDemoActivity extends AppCompatActivity implements
     Location mCurrentLocation;
     private long UPDATE_INTERVAL = 60000;  /* 60 secs */
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
+    public List<Marker> markerList;
+
+    // used for loading the correct markers; unwrap from HomeGroupActivity intent
+    public String groupID = "";
+
+    // Shake detection
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
+
+    // Refresh
+    public ImageButton ibRefresh;
+    // Search
+    public ImageButton ibSearch;
+    public EditText etSearchQuery;
 
     private final static String KEY_LOCATION = "location";
 
@@ -68,6 +108,9 @@ public class MapDemoActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_demo_activity);
 
+        // initialize list of markers
+        markerList = new ArrayList<>();
+
         if (TextUtils.isEmpty(getResources().getString(R.string.google_maps_api_key))) {
             throw new IllegalStateException("You forgot to supply a Google Maps API key");
         }
@@ -78,12 +121,25 @@ public class MapDemoActivity extends AppCompatActivity implements
             mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
 
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+
+        // If you shake your phone, you're prompted to choose the type of map
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+            @Override
+            public void onShake(int count) {
+                showMapTypeSelectorDialog();
+            }
+        });
+
         mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
         if (mapFragment != null) {
             mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap map) {
-                    map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                    map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                     loadMap(map);
                 }
             });
@@ -91,20 +147,56 @@ public class MapDemoActivity extends AppCompatActivity implements
             Toast.makeText(this, "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
         }
 
+        // Set refresh button
+        ibRefresh = (ImageButton) findViewById(R.id.ibRefresh);
+        ibRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                map.clear();
+                loadMap(map);
+            }
+        });
+
+        // Set search button & EditText
+        ibSearch = (ImageButton) findViewById(R.id.ibSearch);
+        etSearchQuery = (EditText) findViewById(R.id.etSearchQuery);
+        ibSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Set text to visible so user can input place
+                etSearchQuery.setVisibility(View.VISIBLE);
+                // Do search
+                String searchMe = etSearchQuery.getText().toString();
+                Geocoder geocoder = new Geocoder(getBaseContext());
+                List<Address> addresses = null;
+                try {
+                    // Getting a maximum of 3 Address that matches the input
+                    // text
+                    addresses = geocoder.getFromLocationName(searchMe, 3);
+                    if (addresses != null && !addresses.equals(""))
+                        search(addresses);
+                } catch (Exception e) {
+                }
+                // Set text to invisible once we're done --> moved to search method b/c asynchronous causing issues
+                // etSearchQuery.setVisibility(View.GONE);
+            }
+        });
+        Toast.makeText(this, "Shake your phone to change the type of map you see!", Toast.LENGTH_SHORT).show();
     }
 
     protected void loadMap(GoogleMap googleMap) {
+
         map = googleMap;
+
         if (map != null) {
             // Map is ready
-            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
             map.setOnMapLongClickListener(this);
             // When the marker is clicked, show details about it
             map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     // Toast.makeText(MapDemoActivity.this, "Clicked a marker!", Toast.LENGTH_SHORT).show();
-                    // TODO custom info window adapter with picture option?
                     Intent markerDetailsIntent = new Intent(getApplicationContext(), MarkerDetailsActivity.class);
                     markerDetailsIntent.putExtra("title", marker.getTitle());
                     markerDetailsIntent.putExtra("snippet", marker.getSnippet());
@@ -113,8 +205,98 @@ public class MapDemoActivity extends AppCompatActivity implements
                     return false;
                 }
             });
-           MapDemoActivityPermissionsDispatcher.getMyLocationWithCheck(this);
-           MapDemoActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+            map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDrag(Marker marker) {
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                    // when the marker is done being dragged, delete it from Parse using the snippet as a key.
+                    final String snippet = marker.getSnippet();
+                    // TODO make this delete safer
+                    // Get all markers from this groupID from Parse, then get the marker from that ID matching the current snippet
+                    ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
+                    query.whereEqualTo("groupID", groupID);
+
+                    // Delete it
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                            if (e==null){
+                                int size = parseObjects.size();
+                                if (size > 0) {
+                                    for (int i = 0; i < size; i++) {
+                                        String curr = parseObjects.get(i).getString("Snippet");
+                                        if (curr.equals(snippet)) {
+                                            ParseObject deleteMe = parseObjects.get(i);
+                                            try {
+                                                deleteMe.delete();
+                                                deleteMe.saveInBackground();
+                                                break;
+                                            } catch (ParseException e1) {
+                                                e1.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                                // else log the error
+                            } else {
+                                Log.e("ERROR:", "" + e.getMessage());
+                            }
+                        }
+                    });
+                    // Remove the actual marker object from the map for real-time result
+                    marker.remove();
+                }
+
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+                }
+            });
+            // TODO Load markers matching groupID (LATER) through Parse; currently just loading all of them with a null groupID
+            ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
+            query.whereEqualTo("groupID", groupID);
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                    if (e==null){
+                        int size = parseObjects.size();
+                        if (size > 0) {
+                            for (int i = 0; i < size; i++) {
+                                // get the current object (ie marker)
+                                ParseObject current = parseObjects.get(i);
+                                // extract attributes: title, snippet, position
+                                String title = current.getString("Title");
+                                String snippet = current.getString("Snippet");
+                                String location = current.getString("Location");
+                                // strip extraneous pieces off string
+                                location = location.substring(10, location.length() - 1);
+                                String[] latlong =  location.split(",");
+                                double latitude = Double.parseDouble(latlong[0]);
+                                double longitude = Double.parseDouble(latlong[1]);
+                                // convert to latlng so we can place the marker there
+                                LatLng position = new LatLng(latitude, longitude);
+                                // add attributes to marker
+                                Marker marker = map.addMarker(new MarkerOptions()
+                                        .draggable(true)
+                                        .position(position)
+                                        .title(title)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
+                                        .snippet(snippet));
+                                // String itemId = parseObjects.get(i).getObjectId();
+                                // Toast.makeText(MapDemoActivity.this, "Loaded from PARSE: object " + itemId, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        // else don't load any image & wait for the user to upload one
+                    } else {
+                        Log.e("ERROR:", "" + e.getMessage());
+                    }
+                }
+            });
+            MapDemoActivityPermissionsDispatcher.getMyLocationWithCheck(this);
+            MapDemoActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+
         } else {
             Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
         }
@@ -172,7 +354,7 @@ public class MapDemoActivity extends AppCompatActivity implements
                     public void onClick(DialogInterface dialog, int which) {
                         // Define color of marker icon
                         BitmapDescriptor defaultMarker =
-                                BitmapDescriptorFactory.fromResource(R.drawable.favorite);
+                                BitmapDescriptorFactory.fromResource(R.drawable.mapicon);
                         // Extract content from alert dialog
                         String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).
                                 getText().toString();
@@ -180,9 +362,22 @@ public class MapDemoActivity extends AppCompatActivity implements
                                 getText().toString();
                         // Creates and adds marker to the map
                         Marker marker = map.addMarker(new MarkerOptions()
+                                .draggable(true)
                                 .position(point)
                                 .title(title)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
                                 .snippet(snippet));
+
+                        markerList.add(marker);
+
+                        // Saves marker to parse (note: saves marker ATTRIBUTES in strings (easier than saving object), not actual marker object!)
+                        ParseObject testObject = new ParseObject("Markers");
+                        testObject.put("Title", marker.getTitle());
+                        testObject.put("Snippet", marker.getSnippet());
+                        testObject.put("Location", String.valueOf(marker.getPosition()));
+                        testObject.put("groupID", groupID);
+                        testObject.saveInBackground();
+
                         // Animate marker using drop effect
                         // --> Call the dropPinEffect method here
                         dropPinEffect(marker);
@@ -208,10 +403,10 @@ public class MapDemoActivity extends AppCompatActivity implements
     }
 
 
-   @Override
-   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-       MapDemoActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        MapDemoActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
     @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
@@ -283,19 +478,20 @@ public class MapDemoActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
 
         // Display the connection status
 
         if (mCurrentLocation != null) {
-            Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
             LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-            // these two lines cause a LOT of problems with cameraUpdate being null. Removed b/c zoom is annoying.
+            // these two lines cause a LOT of problems with cameraUpdate being null. Removed b/c zoom is annoying and unnecessary.
             // CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
             // map.animateCamera(cameraUpdate);
         } else {
-            Toast.makeText(this, "Current location was null, enable GPS on emulator!", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Current location was null, enable GPS on emulator!", Toast.LENGTH_SHORT).show();
         }
-       MapDemoActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+        MapDemoActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
     }
 
     @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
@@ -319,6 +515,13 @@ public class MapDemoActivity extends AppCompatActivity implements
                     }
                 },
                 Looper.myLooper());
+    }
+
+    @Override
+    public void onPause() {
+        // Add the following line to unregister the Sensor Manager onPause
+        mSensorManager.unregisterListener(mShakeDetector);
+        super.onPause();
     }
 
     public void onLocationChanged(Location location) {
@@ -356,11 +559,79 @@ public class MapDemoActivity extends AppCompatActivity implements
             mDialog = dialog;
         }
 
-        // Return a Dialog to the DialogFragment.
+        // Return a Dialog to the DialogFragment
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
         }
     }
 
+    private static final CharSequence[] MAP_TYPE_ITEMS =
+            {"Road Map", "Hybrid", "Satellite", "Terrain"};
+
+    private void showMapTypeSelectorDialog() {
+        // Builder for dialog
+        final String fDialogTitle = "Select Map Type";
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(fDialogTitle);
+
+        // Find the current map type
+        int checkItem = map.getMapType() - 1;
+
+        // configure OnClickListener
+        builder.setSingleChoiceItems(
+                MAP_TYPE_ITEMS,
+                checkItem,
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int item) {
+                        // Change type of map
+                        switch (item) {
+                            case 1:
+                                map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                                break;
+                            case 2:
+                                map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                                break;
+                            case 3:
+                                map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                                break;
+                            default:
+                                map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        }
+                        dialog.dismiss();
+                    }
+                }
+        );
+        // Build & show dialog
+        AlertDialog fMapTypeDialog = builder.create();
+        fMapTypeDialog.setCanceledOnTouchOutside(true);
+        fMapTypeDialog.show();
+    }
+
+    protected void search(List<Address> addresses) {
+        int size = addresses.size();
+        Address address = (Address) addresses.get(size - 1);
+        Double longitude = address.getLongitude();
+        Double latitude = address.getLatitude();
+        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+
+        String addressText = String.format(
+                "%s, %s",
+                address.getMaxAddressLineIndex() > 0 ? address
+                        .getAddressLine(size - 1) : "", address.getCountryName());
+
+        map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        map.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+        // Cleanup before next query & remove visibility
+        etSearchQuery.setText("");
+        etSearchQuery.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent homeGroupIntent = new Intent(MapDemoActivity.this, HomeGroupActivity.class);
+        startActivity(homeGroupIntent);
+    }
 }

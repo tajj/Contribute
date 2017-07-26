@@ -59,14 +59,13 @@ public class HomeGroupActivity extends AppCompatActivity {
 
         final ArrayList<String> list = new ArrayList<String>();
 
-
         //a progress dialog...not necessary, I can delete
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Loading");
         pd.show();
 
-
         final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.group_row, list);
+        listview.setAdapter(listAdapter);
         try{
             query.findInBackground(new FindCallback<ParseObject>() {
                 //using scorelist object to get # of groups to create correct size array
@@ -84,9 +83,8 @@ public class HomeGroupActivity extends AppCompatActivity {
                             //grpDate[count]=groups.getCreatedAt();
                             count++;
                         }
-
-                        listview.setAdapter(listAdapter);
                         listview.setTextFilterEnabled(true);
+                        listAdapter.notifyDataSetChanged();
                         pd.cancel();
                     } else {
                         Log.d("score", "Error: " + e.getMessage());                    }
