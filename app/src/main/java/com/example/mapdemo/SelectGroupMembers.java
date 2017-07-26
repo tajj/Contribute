@@ -36,6 +36,8 @@ public class SelectGroupMembers extends AppCompatActivity {
         //ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
+        //query.whereNotEqualTo("username", "mT1pv9n4PWaFMFvbDzMV8QxBn");
+
        //query.whereNotEqualTo("email", ParseUser.getCurrentUser().getEmail());
 
         final ArrayList<String> list = new ArrayList<String>();
@@ -75,7 +77,7 @@ public class SelectGroupMembers extends AppCompatActivity {
 //                    listAdapter.notifyDataSetChanged();
                     if (scoreList.size() == 0)
                         Log.d("score", "no friends ");
-                        Toast.makeText(getApplicationContext(), "You do not have any friends to join you :/", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(getApplicationContext(), "You do not have any friends to join you :/", Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -100,7 +102,7 @@ public class SelectGroupMembers extends AppCompatActivity {
                     addUsr.save();
                     Toast.makeText(getApplicationContext(), "Member added to Group", Toast.LENGTH_LONG).show();
                 } catch (ParseException e) {
-                    Log.e("error:", e.getMessage());
+                    Log.d("error:", e.getMessage());
                 }
             }
         });
