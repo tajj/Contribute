@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +35,7 @@ public class HomeGroupActivity extends AppCompatActivity {
     String fullName;
    // Date[] grpDate;
 
-    @BindView(R.id.btnAdd)Button btnAdd;
+    @BindView(R.id.btnAdd)ImageButton btnAdd;
     @BindView(R.id.tvSecretSeenAds) TextView btnSecretSeenAds;
 
 
