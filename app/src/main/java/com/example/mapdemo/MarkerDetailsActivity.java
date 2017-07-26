@@ -380,6 +380,25 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             if (selectedImage == null) {
                 return;
             }
+        //        if (requestCode == PICK_PHOTO_CODE && data.getClipData() != null) {
+//            ClipData mClipData = data.getClipData();
+//
+//            ArrayList<Uri> mArrayUri = new ArrayList<>();
+//            ArrayList<Bitmap> mBitmapsSelected = new ArrayList<>();
+//
+//
+//            for (int i = 0; i < mClipData.getItemCount(); i++) {
+//                ClipData.Item item = mClipData.getItemAt(i);
+//                Uri uri = item.getUri();
+//                mArrayUri.add(uri);
+//                // !! You may need to resize the image if it's too large
+//                try {
+//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+//                    mBitmapsSelected.add(bitmap);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
 
             Bitmap resizedImage = BitmapScaler.scaleToFitWidth(selectedImage, 430);
             // Configure byte output stream
