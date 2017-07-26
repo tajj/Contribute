@@ -21,9 +21,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Delete"
-        android:layout_alignParentTop="true"
         android:background="@color/com_facebook_blue"
         android:textColor="@android:color/white"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
     <Button
