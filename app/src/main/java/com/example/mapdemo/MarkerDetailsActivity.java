@@ -238,6 +238,14 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 postPicture();
             }
         });
+
+        ImageButton btn = (ImageButton)findViewById(R.id.btnChat);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MarkerDetailsActivity.this, ChatActivity.class));
+            }
+        });
     }
 
     public void postPicture() {
