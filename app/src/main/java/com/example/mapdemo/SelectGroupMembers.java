@@ -62,7 +62,7 @@ public class SelectGroupMembers extends AppCompatActivity {
                         for (ParseUser groups : scoreList) {
                             list.add((String) groups.get("username"));
 
-                            userids[count]=(String) groups.get("objectId");
+                            userids[count]=(String) groups.get("username");
                             count++;
                         }
                         //notify adapter
@@ -98,7 +98,7 @@ public class SelectGroupMembers extends AppCompatActivity {
                     ParseObject addUsr=new ParseObject("UserConnections");
                     addUsr.put("groupName", grpName);
                     addUsr.put("userGroup", grpId);
-                    addUsr.put("objectId", userids[position]);
+                    addUsr.put("username", userids[position]);
                     addUsr.save();
                     Toast.makeText(getApplicationContext(), "Member added to Group", Toast.LENGTH_LONG).show();
                 } catch (ParseException e) {
