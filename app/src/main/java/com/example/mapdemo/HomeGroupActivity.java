@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -20,24 +21,32 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class HomeGroupActivity extends AppCompatActivity {
     //Intent ii;
-    Button btnAdd;
-    Button btnSecretSeenAds;
+    //Button btnAdd;
+    //Button btnSecretSeenAds;
 
     //these are going to hold all the group ids, names and dates in one place: an array
     String[] groupID;
     String[] groupNAME;
    // Date[] grpDate;
 
+    @BindView(R.id.btnAdd)Button btnAdd;
+    @BindView(R.id.tvSecretSeenAds) TextView btnSecretSeenAds;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homegroup_activity);
+        ButterKnife.bind(this);
 
         //ParseUser currentUser = ParseUser.getCurrentUser();
-        btnAdd = (Button) findViewById(R.id.btnAdd);
-        btnSecretSeenAds = (Button) findViewById(R.id.tvSecretSeenAds);
+        //btnAdd = (Button) findViewById(R.id.btnAdd);
+        //btnSecretSeenAds = (Button) findViewById(R.id.tvSecretSeenAds);
         //ii=new Intent(HomeGroupActivity.this, SelectGroupMembers.class);
         //N.B. this intent needs to be final, used in inner class later
         final Intent ii = new Intent(HomeGroupActivity.this, MapDemoActivity.class);
@@ -46,7 +55,7 @@ public class HomeGroupActivity extends AppCompatActivity {
 
         //creating query in parse for the users
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserConnections");
-        query.whereEqualTo("userId", ParseUser.getCurrentUser().getEmail());
+        query.whereEqualTo("email", ParseUser.getCurrentUser().getEmail());
 
         final ArrayList<String> list = new ArrayList<String>();
 
