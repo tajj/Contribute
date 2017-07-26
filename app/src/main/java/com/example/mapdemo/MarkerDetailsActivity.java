@@ -54,7 +54,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
 
     public boolean parseFlag = false;
 
-    // loading the right images
+    // loading the right imagesz
     public String groupID;
 
     // For local storage
@@ -116,14 +116,13 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         groupID = getIntent().getStringExtra("groupId");
 
 
-
         // loading photo file based on LOCATION from Parse
-        ParseQuery<ParseObject> query  = ParseQuery.getQuery("ParseImageArrays");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseImageArrays");
         query.whereEqualTo("Location", location);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
-                if (e==null){
+                if (e == null) {
                     int size = parseObjects.size();
                     parseFlag = true;
                     // TODO figure out a way to handle duplicate images LATER
@@ -153,8 +152,8 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         // if there's already a path to the corresponding picture for this marker, load it instead of the placeholder image
         if (!parseFlag) { // TODO figure out how to fix double loading -- local & parse loading happen asynchronously so flag isn't useful
             // possible solution ^: multiple threads?
-            File imgFile = new  File(ABSOLUTE_FILE_PATH + photoFileName);
-            if(imgFile.exists()){
+            File imgFile = new File(ABSOLUTE_FILE_PATH + photoFileName);
+            if (imgFile.exists()) {
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 ivMarkerPhoto.setImageBitmap(myBitmap);
             }
@@ -185,7 +184,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
 
         markerID = ID + snippet;
         // loading COMMENTS from Parse (can double-query for safety later)
-        ParseQuery<ParseObject> query2  = ParseQuery.getQuery("Comment");
+        ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Comment");
         query2.whereEqualTo("markerID", markerID);
         query2.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -239,18 +238,19 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton btn = (ImageButton)findViewById(R.id.btnChat);
+        ImageButton btn = (ImageButton) findViewById(R.id.btnChat);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MarkerDetailsActivity.this, ChatActivity.class));
             }
         });
+
     }
 
     public void postPicture() {
         //check counter
-        if(counter == 0) {
+        if (counter == 0) {
             //save the screenshot
             View rootView = findViewById(android.R.id.content).getRootView();
             rootView.setDrawingCacheEnabled(true);
@@ -258,8 +258,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             image = Bitmap.createBitmap(rootView.getDrawingCache());
             // destroy
             rootView.destroyDrawingCache();
-        }
-        else {
+        } else {
             counter = 0;
             shareButton.setShareContent(null);
         }
@@ -287,8 +286,23 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null) {
             // Bring up gallery to select a photo
             startActivityForResult(intent, PICK_PHOTO_CODE);
+//
+//        Intent intent = new Intent(Intent.ACTION_PICK);
+//        intent.setType("image/*");
+//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PHOTO_CODE);
         }
     }
+
+    // Trigger gallery selection for a photo
+    public void onPickPhotoMultiple(View view) {
+
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PHOTO_CODE);
+        }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -316,8 +330,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 // testObject.put("groupID", groupID);
                 testObject.saveInBackground();
             }
-        }
-        else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        } else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Uri takenPhotoUri = getPhotoFileUri(photoFileName);
                 // by this point we have the camera photo on disk
@@ -363,6 +376,31 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
+        //        else if (requestCode == PICK_PHOTO_CODE && resultCode == RESULT_OK && data.getClipData() != null) {
+//            ClipData mClipData = data.getClipData();
+//            ArrayList<Uri> mArrayUri = new ArrayList<>();
+//            ArrayList<Bitmap> mBitmapsSelected = new ArrayList<>();
+//
+//
+//            for (int i = 0; i < mClipData.getItemCount(); i++) {
+//                ClipData.Item item = mClipData.getItemAt(i);
+//                Uri uri = item.getUri();
+//                mArrayUri.add(uri);
+//                // !! You may need to resize the image if it's too large
+//                try {
+//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+//                    mBitmapsSelected.add(bitmap);
+//
+//                    Bitmap resizedImage = BitmapScaler.scaleToFitWidth(bitmap, 430);
+//                    // Configure byte output stream
+//                    stream = new ByteArrayOutputStream();
+//                    // Compress the image further
+//                    resizedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//                    // Load the resized image into a preview
+//                    ivMarkerPhoto.setImageBitmap(bitmap);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
 
         else if (data != null) {
             Uri photoUri = data.getData();
@@ -380,31 +418,14 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             if (selectedImage == null) {
                 return;
             }
-        //        if (requestCode == PICK_PHOTO_CODE && data.getClipData() != null) {
-//            ClipData mClipData = data.getClipData();
-//
-//            ArrayList<Uri> mArrayUri = new ArrayList<>();
-//            ArrayList<Bitmap> mBitmapsSelected = new ArrayList<>();
-//
-//
-//            for (int i = 0; i < mClipData.getItemCount(); i++) {
-//                ClipData.Item item = mClipData.getItemAt(i);
-//                Uri uri = item.getUri();
-//                mArrayUri.add(uri);
-//                // !! You may need to resize the image if it's too large
-//                try {
-//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-//                    mBitmapsSelected.add(bitmap);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
 
             Bitmap resizedImage = BitmapScaler.scaleToFitWidth(selectedImage, 430);
-            // Configure byte output stream
-            stream = new ByteArrayOutputStream();
-            // Compress the image further
-            resizedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    // Configure byte output stream
+                    stream = new ByteArrayOutputStream();
+                    // Compress the image further
+                    resizedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    // Load the resized image into a preview
+                    ivMarkerPhoto.setImageBitmap(selectedImage);
 
             // Save image to Parse
             byte[] image = stream.toByteArray();
@@ -435,12 +456,12 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            // Load the resized image into a preview
-            ivMarkerPhoto.setImageBitmap(selectedImage);
         } else { // Result was a failure OR you loaded from camera directly instead
-            // Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
-        }
+        // Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
     }
+
+}
+
 
     // Returns the Uri for a photo stored on disk given the fileName
     public Uri getPhotoFileUri(String fileName) {
