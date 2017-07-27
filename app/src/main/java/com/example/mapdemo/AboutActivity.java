@@ -13,7 +13,7 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-
+//button to move to group activity
         btnProceed2 = (Button) findViewById(R.id.btnProceed2);
 
         btnProceed2.setOnClickListener(new View.OnClickListener() {

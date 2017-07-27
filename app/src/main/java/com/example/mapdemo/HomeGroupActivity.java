@@ -25,9 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeGroupActivity extends AppCompatActivity {
-    //Intent ii;
-    //Button btnAdd;
-    //Button btnSecretSeenAds;
+
 
     //these are going to hold all the group ids, names and dates in one place: an array
     String[] groupID;
@@ -44,10 +42,7 @@ public class HomeGroupActivity extends AppCompatActivity {
         setContentView(R.layout.homegroup_activity);
         ButterKnife.bind(this);
 
-        //ParseUser currentUser = ParseUser.getCurrentUser();
-        //btnAdd = (Button) findViewById(R.id.btnAdd);
-        //btnSecretSeenAds = (Button) findViewById(R.id.tvSecretSeenAds);
-        //ii=new Intent(HomeGroupActivity.this, SelectGroupMembers.class);
+
         //N.B. this intent needs to be final, used in inner class later
         final Intent ii = new Intent(HomeGroupActivity.this, MapDemoActivity.class);
 
@@ -59,11 +54,12 @@ public class HomeGroupActivity extends AppCompatActivity {
 
         final ArrayList<String> list = new ArrayList<String>();
 
-        //a progress dialog...not necessary, I can delete
+        //a progress dialog for fun
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Loading");
         pd.show();
 
+        //using arrays for navigating groups
         final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.group_row, list);
         listview.setAdapter(listAdapter);
         try{
@@ -74,6 +70,7 @@ public class HomeGroupActivity extends AppCompatActivity {
                         groupID=new String[scoreList.size()];
                         groupNAME=new String[scoreList.size()];
                         //grpDate=new Date[scoreList.size()];
+
                         //using count to locate a specific group in the list,
                         int count=0;
                         for (ParseObject groups : scoreList) {
@@ -83,6 +80,7 @@ public class HomeGroupActivity extends AppCompatActivity {
                             //grpDate[count]=groups.getCreatedAt();
                             count++;
                         }
+
                         listview.setTextFilterEnabled(true);
                         listAdapter.notifyDataSetChanged();
                         pd.cancel();
@@ -99,7 +97,7 @@ public class HomeGroupActivity extends AppCompatActivity {
         }
 
 
-
+//passes group id and name to the maps activity
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -141,12 +139,7 @@ public void onClick(View v) {
         });
         }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
+
 
 
 
