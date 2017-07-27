@@ -16,7 +16,7 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
 //button to move to group activity
-=======
+
 
         fullName = getIntent().getStringExtra("fullName");
 

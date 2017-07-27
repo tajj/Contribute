@@ -19,6 +19,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -31,7 +32,7 @@ public class HomeGroupActivity extends AppCompatActivity {
     String[] groupID;
     String[] groupNAME;
     String fullName;
-   // Date[] grpDate;
+    Date[] grpDate;
 
     @BindView(R.id.btnAdd)ImageButton btnAdd;
     @BindView(R.id.tvSecretSeenAds) TextView btnSecretSeenAds;
@@ -71,15 +72,15 @@ public class HomeGroupActivity extends AppCompatActivity {
                     if (e == null) {
                         groupID=new String[scoreList.size()];
                         groupNAME=new String[scoreList.size()];
-                        //grpDate=new Date[scoreList.size()];
+                        grpDate=new Date[scoreList.size()];
 
                         //using count to locate a specific group in the list,
                         int count=0;
                         for (ParseObject groups : scoreList) {
-                            list.add((String) groups.get("groupName"));
+                            list.add((String) groups.get("groupName")+ "\nCreated: "+groups.getCreatedAt());
                             groupID[count]=(String) groups.get("userGroup");
                             groupNAME[count]=(String) groups.get("groupName");
-                            //grpDate[count]=groups.getCreatedAt();
+                            grpDate[count]=groups.getCreatedAt();
                             count++;
                         }
 
@@ -111,7 +112,7 @@ public class HomeGroupActivity extends AppCompatActivity {
                 ii.putExtra("groupId", groupID[position]);
                 ii.putExtra("groupName", groupNAME[position]);
                 ii.putExtra("fullName", fullName);
-               // ii.putExtra("grpCreatedAt", grpDate[position]);
+                ii.putExtra("grpCreatedAt", grpDate[position]);
                 startActivity(ii);
                 finish();
                 //Toast.makeText(getApplicationContext(), values[position], Toast.LENGTH_LONG).show();
