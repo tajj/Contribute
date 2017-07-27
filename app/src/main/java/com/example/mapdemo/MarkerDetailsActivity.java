@@ -209,7 +209,15 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                             // String username = current.getString("userID");
                             String body = current.getString("body");
                             String timestamp = current.getString("timestamp");
-                            Comment curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
+                            Comment curr;
+                            if (fullName == null) {
+                                String notNullFullName = current.getString("fullName");
+                                curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
+                            }
+                            else {
+
+                                curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
+                            }
                             comments.add(curr);
                             commentAdapter.notifyItemInserted(comments.size() - 1);
                         }
@@ -305,9 +313,8 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         if (requestCode == COMMENT_CODE) {
             if (data != null) { // if the user did not hit the cancel button
                 String body = data.getStringExtra("commentBody");
-                String tempFullName = fullName;
                 String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
-                Comment comment = new Comment(body, tempFullName.toUpperCase() + " AT " + timeStamp, timeStamp);
+                Comment comment = new Comment(body, fullName.toUpperCase() + " AT " + timeStamp, timeStamp);
                 comments.add(comment);
                 commentAdapter.notifyDataSetChanged();
                 rvComments.scrollToPosition(0);
@@ -316,6 +323,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 testObject.put("body", body);
                 testObject.put("timestamp", timeStamp);
                 testObject.put("markerID", markerID);
+                testObject.put("fullName", fullName);
                 // safety
                 testObject.put("groupID", groupID);
                 // testObject.put("userID", userID);

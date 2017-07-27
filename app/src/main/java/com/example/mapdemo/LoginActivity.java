@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (count !=0) {
                     Intent i = new Intent(LoginActivity.this, AboutActivity.class);
-                    String fullName = String.valueOf(mUsername.getText());
+                    String fullName =mUsername.getText().toString();
                     i.putExtra("fullName", fullName);
                     startActivity(i);
                 }
