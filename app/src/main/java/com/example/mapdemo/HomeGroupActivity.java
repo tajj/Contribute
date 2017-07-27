@@ -46,7 +46,7 @@ public class HomeGroupActivity extends AppCompatActivity {
         fullName = getIntent().getStringExtra("fullName");
 
         Intent i=getIntent();
-        final String username=i.getExtras().getString("username");
+        final String username=i.getStringExtra("username");
 
 
         //N.B. this intent needs to be final, used in inner class later
