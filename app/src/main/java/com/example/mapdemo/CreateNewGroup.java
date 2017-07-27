@@ -50,7 +50,7 @@ public class CreateNewGroup extends AppCompatActivity {
                     i.putExtra("grpId", newGrp.getObjectId());
                     i.putExtra("grpName", grpname);
                     ParseObject addUsr=new ParseObject("UserConnections");
-                    addUsr.put("email",ParseUser.getCurrentUser().getEmail());
+                    addUsr.put("username",ParseUser.getCurrentUser().getUsername());
                     addUsr.put("userGroup", newGrp.getObjectId());
                     addUsr.put("groupName", grpname);
                     addUsr.save();
