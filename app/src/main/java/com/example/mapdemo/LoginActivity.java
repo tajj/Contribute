@@ -45,10 +45,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LoginActivity extends AppCompatActivity {
 
-    //CircleImageView mProfileImage;
-    //Button mBtnFb;
-    //Button btnProceed;
-    //TextView mUsername, mEmailID;
+
     Profile mFbProfile;
     ParseUser parseUser;
     int count =0;
@@ -60,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         add("email");
     }};
 
-    //use butterknife
+    //used butterknife
     @BindView(R.id.btn_fb_login) Button mBtnFb;
     @BindView(R.id.btnProceed) Button btnProceed;
     @BindView(R.id.profile_image) CircleImageView mProfileImage;
@@ -73,14 +70,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-
-        //mBtnFb = (Button) findViewById(R.id.btn_fb_login);
-        //mProfileImage = (CircleImageView) findViewById(R.id.profile_image);
-
-       // btnProceed = (Button) findViewById(R.id.btnProceed);
-
-       // mUsername = (TextView) findViewById(R.id.txt_name);
-       // mEmailID = (TextView) findViewById(R.id.txt_email);
 
         mFbProfile = Profile.getCurrentProfile();
 
@@ -106,7 +95,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void done(ParseUser user, ParseException err) {
 
-
                         if (user == null) {
                             System.out.println("user: " + user);
                             Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
@@ -114,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d("MyApp", "User signed up and logged in through Facebook!");
                             getUserDetailsFromFB();
                             count++;
-                            // displayHomeGroupActivity();
 
                         } else {
                             Log.d("MyApp", "User logged in through Facebook!");
@@ -127,16 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-//                if (!ParseFacebookUtils.isLinked(user)) {
-//                    ParseFacebookUtils.linkWithReadPermissionsInBackground(user, this, permissions, new SaveCallback() {
-//                        @Override
-//                        public void done(ParseException ex) {
-//                            if (ParseFacebookUtils.isLinked(user)) {
-//                                Log.d("MyApp", "Woohoo, user logged in with Facebook!");
-//                            }
-//                        }
-//                    });
-//                }
+//
 
             }
         });
@@ -159,10 +137,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void displayHomeGroupActivity() {
-        Intent i = new Intent(LoginActivity.this, HomeGroupActivity.class);
-        startActivity(i);
-    }
+
 
 
     private void saveNewUser() {
@@ -243,8 +218,9 @@ public class LoginActivity extends AppCompatActivity {
         ).executeAsync();
 
 
-        //displayHomeGroupActivity();
     }
+
+    //if the user has already been created
 
     private void getUserDetailsFromParse() {
         parseUser = ParseUser.getCurrentUser();
@@ -264,7 +240,6 @@ public class LoginActivity extends AppCompatActivity {
 
         Toast.makeText(LoginActivity.this, "Welcome back " + mUsername.getText().toString(), Toast.LENGTH_SHORT).show();
 
-        // displayHomeGroupActivity();
     }
 
     @Override
@@ -332,5 +307,4 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 }
-    //proceed button SOS
 
