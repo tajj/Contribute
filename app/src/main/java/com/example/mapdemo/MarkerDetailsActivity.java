@@ -298,8 +298,8 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                         .load(imgFileUrl)
                         .bitmapTransform(new RoundedCornersTransformation(MarkerDetailsActivity.this, 10, 5))
                         .into(ivMarkerPhoto);
-                String itemConfirmID = display.getObjectId();
-                Toast.makeText(MarkerDetailsActivity.this, "Loading from PARSE: object " + itemConfirmID, Toast.LENGTH_SHORT).show();
+//                String itemConfirmID = display.getObjectId();
+//                Toast.makeText(MarkerDetailsActivity.this, "Loading from PARSE: object " + itemConfirmID, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -333,20 +333,21 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     }
 
     public void onPickPhoto(View view) {
-        // Create intent for picking a photo from the gallery
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            // Bring up gallery to select a photo
-            startActivityForResult(intent, PICK_PHOTO_CODE);
-        }
-        //        Intent intent = new Intent(Intent.ACTION_PICK);
-//        intent.setType("image/*");
-//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PHOTO_CODE);
+//        // Create intent for picking a photo from the gallery
+//        Intent intent = new Intent(Intent.ACTION_PICK,
+//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//
+//        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+//        // So as long as the result is not null, it's safe to use the intent.
+//        if (intent.resolveActivity(getPackageManager()) != null) {
+//            // Bring up gallery to select a photo
+//            startActivityForResult(intent, PICK_PHOTO_CODE);
+//        }
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PHOTO_CODE);
     }
 
     @Override
