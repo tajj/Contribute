@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,8 +21,15 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SelectGroupMembers extends AppCompatActivity {
     String[] userids = {""}; // ids of all users in parse
+
+    Intent ii;
+
+    @BindView (R.id.btnToHomeGroup) Button btnToHomeGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +39,7 @@ public class SelectGroupMembers extends AppCompatActivity {
         final String grpName=i.getExtras().getString("grpName");
         final String grpId=i.getExtras().getString("grpId");
         final ListView listview=(ListView)findViewById(R.id.usersList);
+        ButterKnife.bind(this);
 
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         //ensures you cannot add yourself to group
@@ -38,6 +47,7 @@ public class SelectGroupMembers extends AppCompatActivity {
 
 
         final ArrayList<String> list = new ArrayList<String>();
+
 
         //throwing in progress dialog for fun
         final ProgressDialog pd = new ProgressDialog(this);
@@ -81,11 +91,16 @@ public class SelectGroupMembers extends AppCompatActivity {
 
 
         }
-        catch(Exception e){
+         catch(Exception e){
             Log.e("exception:", e.toString());
         }
 
+
+
+
 //adding the user when user is clicked
+
+        ii = new Intent(SelectGroupMembers.this, HomeGroupActivity.class);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -98,22 +113,38 @@ public class SelectGroupMembers extends AppCompatActivity {
                     addUsr.put("userGroup", grpId);
                     addUsr.put("username", userids[position]);
                     addUsr.save();
+                    ii.putExtra("username", userids[position]);
+
                     Toast.makeText(getApplicationContext(), "Member added to Group", Toast.LENGTH_LONG).show();
                 } catch (ParseException e) {
                     Log.d("error:", e.getMessage());
                 }
+
             }
         });
 
 
+        btnToHomeGroup.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+
+                startActivity(ii);
+
+            }
+
+        });
+
 
     }
 
-    //goes back to the home group activity when u click the back button
-    @Override
-    public void onBackPressed(){
-        Intent i =new Intent(this, HomeGroupActivity.class);
-        startActivity(i);
-    }
+
+//    //goes back to the home group activity when u click the back button
+//    @Override
+//    public void onBackPressed(){
+//
+//        startActivity(i);
+//    }
 
 }

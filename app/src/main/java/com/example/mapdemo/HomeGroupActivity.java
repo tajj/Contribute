@@ -45,6 +45,9 @@ public class HomeGroupActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         fullName = getIntent().getStringExtra("fullName");
 
+        Intent i=getIntent();
+        final String username=i.getExtras().getString("username");
+
 
         //N.B. this intent needs to be final, used in inner class later
         final Intent ii = new Intent(HomeGroupActivity.this, MapDemoActivity.class);
@@ -77,7 +80,7 @@ public class HomeGroupActivity extends AppCompatActivity {
                         //using count to locate a specific group in the list,
                         int count=0;
                         for (ParseObject groups : scoreList) {
-                            list.add((String) groups.get("groupName")+ "\nCreated: "+groups.getCreatedAt());
+                            list.add((String) groups.get("groupName")+ "\nOther Members: "+username+"\nCreated: "+groups.getCreatedAt());
                             groupID[count]=(String) groups.get("userGroup");
                             groupNAME[count]=(String) groups.get("groupName");
                             grpDate[count]=groups.getCreatedAt();
