@@ -22,7 +22,6 @@ import java.util.List;
 
 public class SelectGroupMembers extends AppCompatActivity {
     String[] userids = {""}; // ids of all users in parse
-    //ListView listview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +32,14 @@ public class SelectGroupMembers extends AppCompatActivity {
         final String grpId=i.getExtras().getString("grpId");
         final ListView listview=(ListView)findViewById(R.id.usersList);
 
-        //ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
         ParseQuery<ParseUser> query = ParseUser.getQuery();
+        //ensures you cannot add yourself to group
         query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
-        //query.whereNotEqualTo("username", "mT1pv9n4PWaFMFvbDzMV8QxBn");
 
-       //query.whereNotEqualTo("email", ParseUser.getCurrentUser().getEmail());
 
         final ArrayList<String> list = new ArrayList<String>();
 
-        //throwing in progress dialog...not necessary tho
+        //throwing in progress dialog for fun
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Loading");
         pd.show();
@@ -88,6 +85,7 @@ public class SelectGroupMembers extends AppCompatActivity {
             Log.e("exception:", e.toString());
         }
 
+//adding the user when user is clicked
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
