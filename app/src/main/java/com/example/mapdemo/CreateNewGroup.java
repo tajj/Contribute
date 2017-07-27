@@ -17,8 +17,7 @@ import butterknife.ButterKnife;
 
 public class CreateNewGroup extends AppCompatActivity {
 
-    //EditText edGroupName;
-    //Button btnCreateGroup;
+
     Intent i;
 
     @BindView(R.id.btnCreateGroup) Button btnCreateGroup;
@@ -29,11 +28,10 @@ public class CreateNewGroup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_group);
 
-        //btnCreateGroup=(Button)findViewById(btnCreateGroup);
-        //edGroupName=(EditText)findViewById(R.id.edGroupName);
         ButterKnife.bind(this);
         i=new Intent(CreateNewGroup.this, SelectGroupMembers.class);
 
+        //button for creating group
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
 
 
@@ -44,13 +42,15 @@ public class CreateNewGroup extends AppCompatActivity {
                 //putting group name, group id and adding these values to the current app user
                 i.putExtra("grpName", grpname);
                 try{
+                    //registers group in parse
                     ParseObject newGrp=new ParseObject("Groups");
                     newGrp.put("Name", grpname);
                     newGrp.save();
+                    //passing it through intent to next acitivity
                     i.putExtra("grpId", newGrp.getObjectId());
                     i.putExtra("grpName", grpname);
                     ParseObject addUsr=new ParseObject("UserConnections");
-                    addUsr.put("email",ParseUser.getCurrentUser().getEmail());
+                    addUsr.put("username",ParseUser.getCurrentUser().getUsername());
                     addUsr.put("userGroup", newGrp.getObjectId());
                     addUsr.put("groupName", grpname);
                     addUsr.save();

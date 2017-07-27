@@ -19,21 +19,20 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeGroupActivity extends AppCompatActivity {
-    //Intent ii;
-    //Button btnAdd;
-    //Button btnSecretSeenAds;
+
 
     //these are going to hold all the group ids, names and dates in one place: an array
     String[] groupID;
     String[] groupNAME;
     String fullName;
-   // Date[] grpDate;
+    Date[] grpDate;
 
     @BindView(R.id.btnAdd)ImageButton btnAdd;
     @BindView(R.id.tvSecretSeenAds) TextView btnSecretSeenAds;
@@ -46,10 +45,10 @@ public class HomeGroupActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         fullName = getIntent().getStringExtra("fullName");
 
-        //ParseUser currentUser = ParseUser.getCurrentUser();
-        //btnAdd = (Button) findViewById(R.id.btnAdd);
-        //btnSecretSeenAds = (Button) findViewById(R.id.tvSecretSeenAds);
-        //ii=new Intent(HomeGroupActivity.this, SelectGroupMembers.class);
+        Intent i=getIntent();
+        final String username=i.getExtras().getString("username");
+
+
         //N.B. this intent needs to be final, used in inner class later
         final Intent ii = new Intent(HomeGroupActivity.this, MapDemoActivity.class);
 
@@ -57,15 +56,17 @@ public class HomeGroupActivity extends AppCompatActivity {
 
         //creating query in parse for the users
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserConnections");
-        query.whereEqualTo("email", ParseUser.getCurrentUser().getEmail());
+       // query.whereEqualTo("email", ParseUser.getCurrentUser().getEmail());
+        query.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
 
         final ArrayList<String> list = new ArrayList<String>();
 
-        //a progress dialog...not necessary, I can delete
+        //a progress dialog for fun
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Loading");
         pd.show();
 
+        //using arrays for navigating groups
         final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.group_row, list);
         listview.setAdapter(listAdapter);
         try{
@@ -75,16 +76,18 @@ public class HomeGroupActivity extends AppCompatActivity {
                     if (e == null) {
                         groupID=new String[scoreList.size()];
                         groupNAME=new String[scoreList.size()];
-                        //grpDate=new Date[scoreList.size()];
+                        grpDate=new Date[scoreList.size()];
+
                         //using count to locate a specific group in the list,
                         int count=0;
                         for (ParseObject groups : scoreList) {
-                            list.add((String) groups.get("groupName"));
+                            list.add((String) groups.get("groupName")+ "\nOther Members: "+username+"\nCreated: "+groups.getCreatedAt());
                             groupID[count]=(String) groups.get("userGroup");
                             groupNAME[count]=(String) groups.get("groupName");
-                            //grpDate[count]=groups.getCreatedAt();
+                            grpDate[count]=groups.getCreatedAt();
                             count++;
                         }
+
                         listview.setTextFilterEnabled(true);
                         listAdapter.notifyDataSetChanged();
                         pd.cancel();
@@ -101,6 +104,10 @@ public class HomeGroupActivity extends AppCompatActivity {
         }
 
 
+
+//passes group id and name to the maps activity
+
+
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -109,7 +116,7 @@ public class HomeGroupActivity extends AppCompatActivity {
                 ii.putExtra("groupId", groupID[position]);
                 ii.putExtra("groupName", groupNAME[position]);
                 ii.putExtra("fullName", fullName);
-               // ii.putExtra("grpCreatedAt", grpDate[position]);
+                ii.putExtra("grpCreatedAt", grpDate[position]);
                 startActivity(ii);
                 finish();
                 //Toast.makeText(getApplicationContext(), values[position], Toast.LENGTH_LONG).show();
@@ -144,12 +151,7 @@ public void onClick(View v) {
         });
         }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
+
 
 
 
