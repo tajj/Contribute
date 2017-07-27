@@ -30,6 +30,7 @@ public class HomeGroupActivity extends AppCompatActivity {
     //these are going to hold all the group ids, names and dates in one place: an array
     String[] groupID;
     String[] groupNAME;
+    String fullName;
    // Date[] grpDate;
 
     @BindView(R.id.btnAdd)ImageButton btnAdd;
@@ -41,6 +42,7 @@ public class HomeGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homegroup_activity);
         ButterKnife.bind(this);
+        fullName = getIntent().getStringExtra("fullName");
 
 
         //N.B. this intent needs to be final, used in inner class later
@@ -97,13 +99,18 @@ public class HomeGroupActivity extends AppCompatActivity {
         }
 
 
+
 //passes group id and name to the maps activity
+
+
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 ii.putExtra("groupId", groupID[position]);
                 ii.putExtra("groupName", groupNAME[position]);
+                ii.putExtra("fullName", fullName);
                // ii.putExtra("grpCreatedAt", grpDate[position]);
                 startActivity(ii);
                 finish();

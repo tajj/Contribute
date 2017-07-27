@@ -27,6 +27,15 @@
         android:layout_alignStart="@+id/tvTitle" />
 
     <ImageButton
+        android:id="@+id/btnChat"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_vector_notifications"
+        android:layout_alignTop="@+id/ibPost"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
         android:id="@+id/ibGalleryPic"
         android:layout_width="40dp"
         android:layout_height="40dp"
