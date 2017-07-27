@@ -49,7 +49,7 @@ public class HomeGroupActivity extends AppCompatActivity {
         //ParseUser currentUser = ParseUser.getCurrentUser();
         //btnAdd = (Button) findViewById(R.id.btnAdd);
         //btnSecretSeenAds = (Button) findViewById(R.id.tvSecretSeenAds);
-        //ii=new Intent(HomeGroupActivity.this, SelectGroupMembers.class);
+        //ii=new Intent(HomeGroupActivity.this, SelectGroupMembers.class); //
         //N.B. this intent needs to be final, used in inner class later
         final Intent ii = new Intent(HomeGroupActivity.this, MapDemoActivity.class);
 
