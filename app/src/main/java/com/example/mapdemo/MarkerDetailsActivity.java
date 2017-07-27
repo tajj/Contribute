@@ -243,6 +243,48 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 shareButton.setShareContent(content);
                 counter = 0;
                 shareButton.performClick();
+            });
+            // safety/sanity
+            commentAdapter.notifyDataSetChanged();
+            // POST AFTER SCREENSHOT
+            ibPost = (ImageButton) findViewById(R.id.ibPost);
+            ibPost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    View rootView = findViewById(android.R.id.content).getRootView();
+                    rootView.setDrawingCacheEnabled(true);
+                    // creates immutable clone of image
+                    image = Bitmap.createBitmap(rootView.getDrawingCache());
+                    // destroy
+                    rootView.destroyDrawingCache();
+                    SharePhoto photo = new SharePhoto.Builder().setBitmap(image).build();
+                    SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo).build();
+                    shareButton.setShareContent(content);
+                    counter = 0;
+                    shareButton.performClick();
+
+                }
+            });
+
+
+            // set information
+            tvTitle.setText(ID);
+            tvSnippet.setText(snippet);
+
+            shareButton = (ShareButton) findViewById(R.id.share_btn);
+            shareButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    postPicture();
+                }
+            });
+
+//            ImageButton btn = (ImageButton) findViewById(R.id.btnChat);
+//            btn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    startActivity(new Intent(MarkerDetailsActivity.this, ChatActivity.class));
+//                }
+//            });
 
             }
         });
