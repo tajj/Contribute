@@ -8,11 +8,33 @@
 
     <ImageView
         android:id="@+id/ivMarkerPhoto"
-        android:layout_width="380dp"
+        android:layout_width="330dp"
         android:layout_height="220dp"
-        android:layout_marginTop="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:scaleType="fitXY"
         app:srcCompat="@drawable/placeholder" />
+
+    <ImageButton
+        android:id="@+id/ibArrowFoward"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="#ffffffff"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_arrow_forward_black_24dp"
+        android:layout_marginTop="87dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/ivMarkerPhoto" />
+
+    <ImageButton
+        android:id="@+id/ibArrowBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="#ffffffff"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+        android:layout_alignTop="@+id/ibArrowFoward"
+        android:layout_toStartOf="@+id/ivMarkerPhoto" />
 
     <ImageButton
         android:id="@+id/ibUploadPic"
@@ -25,6 +47,15 @@
         android:layout_marginTop="20dp"
         android:layout_below="@+id/ivMarkerPhoto"
         android:layout_alignStart="@+id/tvTitle" />
+
+    <ImageButton
+        android:id="@+id/btnChat"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_vector_notifications"
+        android:layout_alignTop="@+id/ibPost"
+        android:layout_centerHorizontal="true" />
 
     <ImageButton
         android:id="@+id/ibGalleryPic"
@@ -110,6 +141,8 @@
         android:layout_marginEnd="39dp"
         android:layout_alignTop="@+id/share_btn"
         android:layout_toStartOf="@+id/share_btn" />
+
+
 
 
 </RelativeLayout>

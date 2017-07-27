@@ -8,7 +8,7 @@
     <color name="medium_red">#ffe0245e</color>
     <color name="medium_red_30">#4de0245e</color>
     <color name="medium_red_50">#80e0245e</color>
-    <color name="twitter_blue">#ff1da1f2</color>
+    <color name="twitter_blue">#51B7E3</color>
     <color name="twitter_blue_30">#4d1da1f2</color>
     <color name="twitter_blue_50">#801da1f2</color>
     <color name="twitter_blue_fill_pressed">#ff1370a9</color>
@@ -26,5 +26,5 @@
     <color name="button_grey">#808080</color>
     <color name="primary">#00BCD4</color>
     <color name="primaryDark">#0097A7</color>
-    <color name="accent">#FD01C4</color>
+    <color name="accent">#EB446B</color>
 </resources>

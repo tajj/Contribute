@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,9 +21,15 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SelectGroupMembers extends AppCompatActivity {
     String[] userids = {""}; // ids of all users in parse
-    //ListView listview;
+
+    Intent ii;
+
+    @BindView (R.id.btnToHomeGroup) Button btnToHomeGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +39,17 @@ public class SelectGroupMembers extends AppCompatActivity {
         final String grpName=i.getExtras().getString("grpName");
         final String grpId=i.getExtras().getString("grpId");
         final ListView listview=(ListView)findViewById(R.id.usersList);
+        ButterKnife.bind(this);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
-        //ParseQuery<ParseObject> query = ParseObject.getQuery();
-        //query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
-        query.whereNotEqualTo("email", ParseUser.getCurrentUser().getEmail());
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        //ensures you cannot add yourself to group
+        query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
+
 
         final ArrayList<String> list = new ArrayList<String>();
 
-        //throwing in progress dialog...not necessary tho
+
+        //throwing in progress dialog for fun
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Loading");
         pd.show();
@@ -50,17 +59,17 @@ public class SelectGroupMembers extends AppCompatActivity {
 
         try{
 
-            query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> scoreList, com.parse.ParseException e) {
+            query.findInBackground(new FindCallback<ParseUser>() {
+                public void done(List<ParseUser> scoreList, com.parse.ParseException e) {
                     if (e == null) {
                         //Log.d("score", "Retrieved " + scoreList.size() + " scores");
                         userids = new String[scoreList.size()];
                         int count = 0;
                         //adding users to list
-                        for (ParseObject groups : scoreList) {
-                            list.add((String) groups.get("objectId"));
+                        for (ParseUser groups : scoreList) {
+                            list.add((String) groups.get("username"));
 
-                            userids[count]=(String) groups.get("objectId");
+                            userids[count]=(String) groups.get("username");
                             count++;
                         }
                         //notify adapter
@@ -75,17 +84,23 @@ public class SelectGroupMembers extends AppCompatActivity {
 //                    listAdapter.notifyDataSetChanged();
                     if (scoreList.size() == 0)
                         Log.d("score", "no friends ");
-                        Toast.makeText(getApplicationContext(), "You do not have any friends to join you :/", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(getApplicationContext(), "You do not have any friends to join you :/", Toast.LENGTH_LONG).show();
                 }
             });
 
 
 
         }
-        catch(Exception e){
+         catch(Exception e){
             Log.e("exception:", e.toString());
         }
 
+
+
+
+//adding the user when user is clicked
+
+        ii = new Intent(SelectGroupMembers.this, HomeGroupActivity.class);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -96,24 +111,40 @@ public class SelectGroupMembers extends AppCompatActivity {
                     ParseObject addUsr=new ParseObject("UserConnections");
                     addUsr.put("groupName", grpName);
                     addUsr.put("userGroup", grpId);
-                    addUsr.put("userId", userids[position]);
+                    addUsr.put("username", userids[position]);
                     addUsr.save();
+                    ii.putExtra("username", userids[position]);
+
                     Toast.makeText(getApplicationContext(), "Member added to Group", Toast.LENGTH_LONG).show();
                 } catch (ParseException e) {
-                    Log.e("error:", e.getMessage());
+                    Log.d("error:", e.getMessage());
                 }
+
             }
         });
 
 
+        btnToHomeGroup.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+
+                startActivity(ii);
+
+            }
+
+        });
+
 
     }
 
-    //goes back to the home group activity when u click the back button
-    @Override
-    public void onBackPressed(){
-        Intent i =new Intent(this, HomeGroupActivity.class);
-        startActivity(i);
-    }
+
+//    //goes back to the home group activity when u click the back button
+//    @Override
+//    public void onBackPressed(){
+//
+//        startActivity(i);
+//    }
 
 }
