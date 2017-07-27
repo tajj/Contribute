@@ -61,7 +61,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
 
     public boolean parseFlag = false;
 
-    // loading the right imagesz
+    // loading the right images
     public String groupID;
 
     // For local storage
@@ -81,9 +81,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     ImageButton ibComment;
     ImageButton ibPost; // TODO right now add to appropriate .xml
     ImageView ivMarkerPhoto;
-    ImageButton ibArrowFoward;
-    ImageButton ibArrowBack;
-    int temp =0;
 
     // Share
     private ShareButton shareButton;
@@ -98,14 +95,12 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     RecyclerView rvComments;
     CommentAdapter commentAdapter;
     ArrayList<Comment> comments;
-    ArrayList<ParseObject> PFObjects;
-    int currentIndex = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.markerdetails_activity);
-
         // initialize FB SDK for share
         FacebookSdk.sdkInitialize(getApplicationContext());
         // retrieve intent & setup
@@ -118,12 +113,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvSnippet = (TextView) findViewById(R.id.tvSnippet);
         ivMarkerPhoto = (ImageView) findViewById(R.id.ivMarkerPhoto);
-        // Upload picture from gallery (onClickListener is set in .xml b/c permissions not required)
-        ibGalleryPic = (ImageButton) findViewById(R.id.ibGalleryPic);
-
-        ibArrowFoward = (ImageButton) findViewById(R.id.ibArrowFoward);
-        ibArrowBack = (ImageButton) findViewById(R.id.ibArrowBack);
-
         comments = new ArrayList<>();
         commentAdapter = new CommentAdapter(comments);
         rvComments = (RecyclerView) findViewById(R.id.rvComments);
@@ -133,23 +122,34 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         groupID = getIntent().getStringExtra("groupID");
 
 
-
-        // loading photo file based on LOCATION from Parse
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseImageArrays");
+        ParseQuery<ParseObject> query  = ParseQuery.getQuery("ParseImageArrays");
         query.whereEqualTo("Location", location);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
-                if (e == null) {
+                if (e==null){
                     int size = parseObjects.size();
                     parseFlag = true;
                     // TODO figure out a way to handle duplicate images LATER
                     // if there's something at this location already, load the one that matches the current group
                     if (size > 0) {
-                        PFObjects = (ArrayList<ParseObject>) parseObjects;
                         // pretty much the safest way to avoid collisions ever
-                        if (PFObjects.size() != 0) {
-                            updateIv(0);
+                        for (int i = 0; i < size; i++) {
+                            ParseObject match = parseObjects.get(i);
+                            String checkGroupID = String.valueOf(match.get("groupID"));
+                            if (checkGroupID.equals(groupID)) {
+                                ParseFile imgFile = match.getParseFile("MarkerImage");
+                                // get the URL
+                                String imgFileUrl = imgFile.getUrl();
+                                // load using Glide
+                                Glide.with(getApplicationContext())
+                                        .load(imgFileUrl)
+                                        .bitmapTransform(new RoundedCornersTransformation(MarkerDetailsActivity.this, 10, 5))
+                                        .into(ivMarkerPhoto);
+                                // load it into the image view
+                                String itemConfirmID = parseObjects.get(i).getObjectId();
+                                Toast.makeText(MarkerDetailsActivity.this, "Loading from PARSE: object " + itemConfirmID, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                     // else don't load any image & wait for the user to upload one
@@ -159,87 +159,90 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             }
         });
 
-
-
-        ibArrowFoward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // loading photo file based on LOCATION from Parse
-                currentIndex++;
-                if (currentIndex >= PFObjects.size()) {
-                    currentIndex = 0;
-                }
-                updateIv(currentIndex);
-            }
-        });
-
-        ibArrowBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // loading photo file based on LOCATION from Parse
-                currentIndex--;
-                if (currentIndex < 0) {
-                    currentIndex = PFObjects.size() - 1;
-                }
-                updateIv(currentIndex);
-            }
-        });
-
         // if there's already a path to the corresponding picture for this marker, load it instead of the placeholder image
         if (!parseFlag) { // TODO figure out how to fix double loading -- local & parse loading happen asynchronously so flag isn't useful
             // possible solution ^: multiple threads?
-            File imgFile = new File(ABSOLUTE_FILE_PATH + photoFileName);
-
-            if (imgFile.exists()) {
+            File imgFile = new  File(ABSOLUTE_FILE_PATH + photoFileName);
+            if(imgFile.exists()){
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 ivMarkerPhoto.setImageBitmap(myBitmap);
             }
+        }
 
-            // Camera taking picture
-            ibUploadPic = (ImageButton) findViewById(R.id.ibUploadPic);
-            ibUploadPic.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    MarkerDetailsActivityPermissionsDispatcher.onLaunchCameraWithCheck(MarkerDetailsActivity.this, v);
-                }
-            });
+        // Camera taking picture
+        ibUploadPic = (ImageButton) findViewById(R.id.ibUploadPic);
+        ibUploadPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MarkerDetailsActivityPermissionsDispatcher.onLaunchCameraWithCheck(MarkerDetailsActivity.this, v);
+            }
+        });
 
+        // Upload picture from gallery (onClickListener is set in .xml b/c permissions not required)
+        ibGalleryPic = (ImageButton) findViewById(R.id.ibGalleryPic);
 
-            // Post a comment
-            ibComment = (ImageButton) findViewById(R.id.ibComment);
-            ibComment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // TODO pass in username from groupID, etc. with the intent --> actually may not need to do that
-                    Intent postCommentIntent = new Intent(getApplicationContext(), PostCommentActivity.class);
-                    startActivityForResult(postCommentIntent, COMMENT_CODE);
-                }
-            });
+        // Post a comment
+        ibComment = (ImageButton) findViewById(R.id.ibComment);
+        ibComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO pass in username from groupID, etc. with the intent --> actually may not need to do that
+                Intent postCommentIntent = new Intent(getApplicationContext(), PostCommentActivity.class);
+                startActivityForResult(postCommentIntent, COMMENT_CODE);
+            }
+        });
 
-            markerID = ID + snippet;
-            // loading COMMENTS from Parse (can double-query for safety later)
-            ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Comment");
-            query2.whereEqualTo("markerID", markerID);
-            query2.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
-                    if (e == null) {
-                        int size = parseObjects.size();
-                        for (int i = 0; i < size; i++) {
-                            ParseObject current = parseObjects.get(i);
-                            // double query
-                            String checkGroupID = String.valueOf(current.get("groupID"));
-                            if (checkGroupID.equals(groupID)) {
-                                // String username = current.getString("userID");
-                                String body = current.getString("body");
-                                String timestamp = current.getString("timestamp");
-                                Comment curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
-                                comments.add(curr);
-                                commentAdapter.notifyItemInserted(comments.size() - 1);
+        markerID = ID + snippet;
+        // loading COMMENTS from Parse (can double-query for safety later)
+        ParseQuery<ParseObject> query2  = ParseQuery.getQuery("Comment");
+        query2.whereEqualTo("markerID", markerID);
+        query2.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                if (e == null) {
+                    int size = parseObjects.size();
+                    for (int i = 0; i < size; i++) {
+                        ParseObject current = parseObjects.get(i);
+                        // double query
+                        String checkGroupID = String.valueOf(current.get("groupID"));
+                        if (checkGroupID.equals(groupID)) {
+                            // String username = current.getString("userID");
+                            String body = current.getString("body");
+                            String timestamp = current.getString("timestamp");
+                            Comment curr;
+                            if (fullName == null) {
+                                String notNullFullName = current.getString("fullName");
+                                curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
                             }
+                            else {
+
+                                curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
+                            }
+                            comments.add(curr);
+                            commentAdapter.notifyItemInserted(comments.size() - 1);
                         }
                     }
                 }
+            }
+        });
+        // safety/sanity
+        commentAdapter.notifyDataSetChanged();
+        // POST AFTER SCREENSHOT
+        ibPost = (ImageButton) findViewById(R.id.ibPost);
+        ibPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View rootView = findViewById(android.R.id.content).getRootView();
+                rootView.setDrawingCacheEnabled(true);
+                // creates immutable clone of image
+                image = Bitmap.createBitmap(rootView.getDrawingCache());
+                // destroy
+                rootView.destroyDrawingCache();
+                SharePhoto photo = new SharePhoto.Builder().setBitmap(image).build();
+                SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo).build();
+                shareButton.setShareContent(content);
+                counter = 0;
+                shareButton.performClick();
             });
             // safety/sanity
             commentAdapter.notifyDataSetChanged();
@@ -283,30 +286,25 @@ public class MarkerDetailsActivity extends AppCompatActivity {
 //                }
 //            });
 
-        }
-
-
-    }
-
-    public void updateIv(int index) {
-        if (PFObjects.size() != 0) {
-            ParseObject display = PFObjects.get(index);
-            ParseFile imgFile = display.getParseFile("MarkerImage");
-            if (imgFile != null) {
-                String imgFileUrl = imgFile.getUrl();
-                Glide.with(getApplicationContext())
-                        .load(imgFileUrl)
-                        .bitmapTransform(new RoundedCornersTransformation(MarkerDetailsActivity.this, 10, 5))
-                        .into(ivMarkerPhoto);
-//                String itemConfirmID = display.getObjectId();
-//                Toast.makeText(MarkerDetailsActivity.this, "Loading from PARSE: object " + itemConfirmID, Toast.LENGTH_SHORT).show();
             }
-        }
+        });
+
+
+        // set information
+        tvTitle.setText(ID);
+        tvSnippet.setText(snippet);
+
+        shareButton = (ShareButton) findViewById(R.id.share_btn);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                postPicture();
+            }
+        });
     }
 
     public void postPicture() {
         //check counter
-        if (counter == 0) {
+        if(counter == 0) {
             //save the screenshot
             View rootView = findViewById(android.R.id.content).getRootView();
             rootView.setDrawingCacheEnabled(true);
@@ -314,7 +312,8 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             image = Bitmap.createBitmap(rootView.getDrawingCache());
             // destroy
             rootView.destroyDrawingCache();
-        } else {
+        }
+        else {
             counter = 0;
             shareButton.setShareContent(null);
         }
@@ -332,22 +331,17 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         }
     }
 
+    // Trigger gallery selection for a photo
     public void onPickPhoto(View view) {
-//        // Create intent for picking a photo from the gallery
-//        Intent intent = new Intent(Intent.ACTION_PICK,
-//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//
-//        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-//        // So as long as the result is not null, it's safe to use the intent.
-//        if (intent.resolveActivity(getPackageManager()) != null) {
-//            // Bring up gallery to select a photo
-//            startActivityForResult(intent, PICK_PHOTO_CODE);
-//        }
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PHOTO_CODE);
+        // Create intent for picking a photo from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            // Bring up gallery to select a photo
+            startActivityForResult(intent, PICK_PHOTO_CODE);
+        }
     }
 
     @Override
@@ -361,9 +355,8 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         if (requestCode == COMMENT_CODE) {
             if (data != null) { // if the user did not hit the cancel button
                 String body = data.getStringExtra("commentBody");
-                String tempFullName = fullName;
                 String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
-                Comment comment = new Comment(body, tempFullName.toUpperCase() + " AT " + timeStamp, timeStamp);
+                Comment comment = new Comment(body, fullName.toUpperCase() + " AT " + timeStamp, timeStamp);
                 comments.add(comment);
                 commentAdapter.notifyDataSetChanged();
                 rvComments.scrollToPosition(0);
@@ -372,12 +365,14 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 testObject.put("body", body);
                 testObject.put("timestamp", timeStamp);
                 testObject.put("markerID", markerID);
+                testObject.put("fullName", fullName);
                 // safety
                 testObject.put("groupID", groupID);
                 // testObject.put("userID", userID);
                 testObject.saveInBackground();
             }
-        } else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        }
+        else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Uri takenPhotoUri = getPhotoFileUri(photoFileName);
                 // by this point we have the camera photo on disk
@@ -424,31 +419,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
-        //        else if (requestCode == PICK_PHOTO_CODE && resultCode == RESULT_OK && data.getClipData() != null) {
-//            ClipData mClipData = data.getClipData();
-//            ArrayList<Uri> mArrayUri = new ArrayList<>();
-//            ArrayList<Bitmap> mBitmapsSelected = new ArrayList<>();
-//
-//
-//            for (int i = 0; i < mClipData.getItemCount(); i++) {
-//                ClipData.Item item = mClipData.getItemAt(i);
-//                Uri uri = item.getUri();
-//                mArrayUri.add(uri);
-//                // !! You may need to resize the image if it's too large
-//                try {
-//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-//                    mBitmapsSelected.add(bitmap);
-//
-//                    Bitmap resizedImage = BitmapScaler.scaleToFitWidth(bitmap, 430);
-//                    // Configure byte output stream
-//                    stream = new ByteArrayOutputStream();
-//                    // Compress the image further
-//                    resizedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//                    // Load the resized image into a preview
-//                    ivMarkerPhoto.setImageBitmap(bitmap);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
 
         else if (data != null) {
             Uri photoUri = data.getData();
@@ -471,9 +441,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             // Configure byte output stream
             stream = new ByteArrayOutputStream();
             // Compress the image further
-            resizedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            // Load the resized image into a preview
-            ivMarkerPhoto.setImageBitmap(selectedImage);
+            resizedImage.compress(Bitmap.CompressFormat.JPEG, 88, stream);
 
             // Save image to Parse
             byte[] image = stream.toByteArray();
@@ -505,13 +473,12 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            // Load the resized image into a preview
+            ivMarkerPhoto.setImageBitmap(selectedImage);
         } else { // Result was a failure OR you loaded from camera directly instead
             // Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }
-
     }
-
-
 
     // Returns the Uri for a photo stored on disk given the fileName
     public Uri getPhotoFileUri(String fileName) {
