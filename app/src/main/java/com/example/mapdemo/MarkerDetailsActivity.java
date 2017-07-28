@@ -354,6 +354,11 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == COMMENT_CODE) {
             if (data != null) { // if the user did not hit the cancel button
+                String action = data.getStringExtra("action");
+                // get out fast
+                if (action.equals("back")) {
+                    return;
+                }
                 String body = data.getStringExtra("commentBody");
                 String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
                 Comment comment = new Comment(body, fullName.toUpperCase() + " AT " + timeStamp, timeStamp);
