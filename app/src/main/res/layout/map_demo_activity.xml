@@ -43,4 +43,14 @@
 		android:visibility="gone"
 		android:inputType="textMultiLine" />
 
+	<ImageButton
+		android:id="@+id/ibFilter"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:layout_alignTop="@+id/ibSearch"
+		android:layout_toEndOf="@+id/ibSearch"
+		android:background="@android:color/transparent"
+		android:scaleType="fitXY"
+		app:srcCompat="@drawable/markerdetails_filter" />
+
 </RelativeLayout>
