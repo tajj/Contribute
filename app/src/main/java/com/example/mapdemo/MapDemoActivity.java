@@ -50,7 +50,9 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import permissions.dispatcher.NeedsPermission;
@@ -384,12 +386,14 @@ public class MapDemoActivity extends AppCompatActivity implements
 
                         markerList.add(marker);
 
-                        // Saves marker to parse (note: saves marker ATTRIBUTES in strings (easier than saving object), not actual marker object!)
+                        // Saves marker to parse
+                        String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
                         ParseObject testObject = new ParseObject("Markers");
                         testObject.put("Title", marker.getTitle());
                         testObject.put("Snippet", marker.getSnippet());
                         testObject.put("Location", String.valueOf(marker.getPosition()));
                         testObject.put("groupID", groupID);
+                        testObject.put("Timestamp", timeStamp);
                         testObject.saveInBackground();
 
                         // Animate marker using drop effect
@@ -583,6 +587,100 @@ public class MapDemoActivity extends AppCompatActivity implements
     private static final CharSequence[] FILTER_ITEMS =
             {"Last day", "Last week", "Last year"};
 
+
+    // determine if a given marker has been placed within the X period (relative to current time)
+    private void filterQuery(String filterFlag) {
+        // Get current time
+        final String currentTime = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
+        // Query ALL group's markers from Parse & load only corresponding ones
+        ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
+        query.whereEqualTo("groupID", groupID);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e==null){
+                    int size = parseObjects.size();
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
+                            // get the current object (ie marker)
+                            ParseObject current = parseObjects.get(i);
+                            // extract attributes: title, snippet, position, timestamp
+                            String title = current.getString("Title");
+                            String snippet = current.getString("Snippet");
+                            String location = current.getString("Location");
+                            String timeStamp = current.getString("Timestamp");
+                            // strip extraneous pieces off string
+                            location = location.substring(10, location.length() - 1);
+                            String[] latlong =  location.split(",");
+                            double latitude = Double.parseDouble(latlong[0]);
+                            double longitude = Double.parseDouble(latlong[1]);
+                            // convert to latlng so we can place the marker there
+                            LatLng position = new LatLng(latitude, longitude);
+                            // add attributes to marker if within year
+                            if (isWithinYear(currentTime, timeStamp)) {
+                                Marker marker = map.addMarker(new MarkerOptions()
+                                        .draggable(true)
+                                        .position(position)
+                                        .title(title)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
+                                        .snippet(snippet));
+                            }
+                        }
+                    }
+                } else {
+                    Log.e("ERROR:", "" + e.getMessage());
+                }
+            }
+        });
+
+
+    }
+
+    public boolean isWithinYear(String currentTime, String markerTime) {
+        // current year is always greater than or equal to than marker year
+        String currentYear = currentTime.substring(12);
+        String markerYear = markerTime.substring(12);
+        int currYear = Integer.valueOf(currentYear);
+        int markYear = Integer.valueOf(markerYear);
+        // 2017 vs. 2015, for example
+        if (currYear - markYear > 1) {
+            return false;
+        }
+        // then move on to month; since we are already within a <2 year period, if markerMonth > currentMonth, return false.
+        // OFF BY ONE
+        String currentMonth = currentTime.substring(6, 8);
+        String markerMonth = markerTime.substring(6, 8);
+        int currMonth = Integer.valueOf(currentMonth);
+        int markMonth = Integer.valueOf(markerMonth);
+        if (markMonth > currMonth) {
+            return false;
+        }
+        // then move on to day; if markerDay > currentDay, return false.
+        String currentDay = currentTime.substring(9, 11);
+        String markerDay = markerTime.substring(9, 11);
+        int currDay = Integer.valueOf(currentDay);
+        int markDay = Integer.valueOf(markerDay);
+        if (markDay > currDay) {
+            return false;
+        }
+        // if you make it this far
+        return true;
+    }
+
+    public boolean isWithinWeek(String currentTime, String markerTime) {
+        if (!isWithinYear(currentTime, markerTime)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isWithinDay(String currentTime, String markerTime) {
+        if (!isWithinYear(currentTime, markerTime) || !isWithinWeek(currentTime, markerTime)) {
+            return false;
+        }
+        return true;
+    }
+
     private void showFilterSelectorDialog () {
         final String filterDialogTitle = "What do you want to filter by?";
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -592,15 +690,13 @@ public class MapDemoActivity extends AppCompatActivity implements
                 FILTER_ITEMS,
                 -1,
                 new DialogInterface.OnClickListener() {
-
                     public void onClick(DialogInterface dialog, int item) {
                         // Change type of map
                         switch (item) {
-                            case 1:
+                            default:
                                 map.clear();
-                                break;
-                            default: // change this to something smart
-                                map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                                filterQuery("");
+                                // do nothing, just keep markers as they are
                         }
                         dialog.dismiss();
                     }
