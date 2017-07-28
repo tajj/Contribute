@@ -91,6 +91,8 @@ public class MapDemoActivity extends AppCompatActivity implements
 
     // Refresh
     public ImageButton ibRefresh;
+    // Filter
+    public ImageButton ibFilter;
     // Search
     public ImageButton ibSearch;
     public EditText etSearchQuery;
@@ -162,6 +164,14 @@ public class MapDemoActivity extends AppCompatActivity implements
             }
         });
 
+        ibFilter = (ImageButton) findViewById(R.id.ibFilter);
+        ibFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterSelectorDialog();
+            }
+        });
+
         // Set search button & EditText
         ibSearch = (ImageButton) findViewById(R.id.ibSearch);
         etSearchQuery = (EditText) findViewById(R.id.etSearchQuery);
@@ -221,11 +231,9 @@ public class MapDemoActivity extends AppCompatActivity implements
                 public void onMarkerDragEnd(Marker marker) {
                     // when the marker is done being dragged, delete it from Parse using the snippet as a key.
                     final String snippet = marker.getSnippet();
-                    // TODO make this delete safer
                     // Get all markers from this groupID from Parse, then get the marker from that ID matching the current snippet
                     ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
                     query.whereEqualTo("groupID", groupID);
-
                     // Delete it
                     query.findInBackground(new FindCallback<ParseObject>() {
                         @Override
@@ -570,6 +578,38 @@ public class MapDemoActivity extends AppCompatActivity implements
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
         }
+    }
+
+    private static final CharSequence[] FILTER_ITEMS =
+            {"Last day", "Last week", "Last year"};
+
+    private void showFilterSelectorDialog () {
+        final String filterDialogTitle = "What do you want to filter by?";
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(filterDialogTitle);
+        // configure OnClickListener
+        builder.setSingleChoiceItems(
+                FILTER_ITEMS,
+                -1,
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int item) {
+                        // Change type of map
+                        switch (item) {
+                            case 1:
+                                map.clear();
+                                break;
+                            default: // change this to something smart
+                                map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        }
+                        dialog.dismiss();
+                    }
+                }
+        );
+        // Build & show dialog
+        AlertDialog fFilterDialog = builder.create();
+        fFilterDialog.setCanceledOnTouchOutside(true);
+        fFilterDialog.show();
     }
 
     private static final CharSequence[] MAP_TYPE_ITEMS =
