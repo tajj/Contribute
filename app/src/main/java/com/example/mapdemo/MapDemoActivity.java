@@ -712,12 +712,19 @@ public class MapDemoActivity extends AppCompatActivity implements
                 -1,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        // Change type of map
-                        switch (item) {
-                            default:
-                                map.clear();
-                                filterQuery("year");
-                                // do nothing, just keep markers as they are
+                        // Filter!
+                        if (item == 2) {
+                            // by year
+                            map.clear();
+                            filterQuery("year");
+                        }
+                        else if (item == 1) {
+                            map.clear();
+                            filterQuery("month");
+                        }
+                        else if (item == 0) {
+                            map.clear();
+                            filterQuery("day");
                         }
                         dialog.dismiss();
                     }
