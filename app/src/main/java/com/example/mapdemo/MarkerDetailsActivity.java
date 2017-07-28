@@ -79,7 +79,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     ImageButton ibUploadPic;
     ImageButton ibGalleryPic;
     ImageButton ibComment;
-    ImageButton ibPost; // TODO right now add to appropriate .xml
+    ImageButton ibPost;
     ImageView ivMarkerPhoto;
 
     // Share
@@ -186,7 +186,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         ibComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO pass in username from groupID, etc. with the intent --> actually may not need to do that
                 Intent postCommentIntent = new Intent(getApplicationContext(), PostCommentActivity.class);
                 startActivityForResult(postCommentIntent, COMMENT_CODE);
             }
