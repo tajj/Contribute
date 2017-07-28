@@ -114,7 +114,7 @@
         <activity android:name=".CreateNewGroup" />
         <activity android:name=".SecretSeenAds" />
         <activity android:name=".AboutActivity"></activity>
-        <activity android:name=".ChatActivity"/>
+        <!--<activity android:name=".ChatActivity"/>-->
 
     </application>
 
