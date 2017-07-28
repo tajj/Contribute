@@ -33,6 +33,7 @@ public class PostCommentActivity extends AppCompatActivity {
                 // pass back to MarkerDetailsActivity
                 Intent passBack = new Intent();
                 // Pass data back
+                passBack.putExtra("action", "post");
                 passBack.putExtra("commentBody", commentBody);
                 // passBack.putExtra("body", commentBody);
                 setResult(COMMENT_CODE, passBack);
@@ -46,5 +47,14 @@ public class PostCommentActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    // idiot proof
+    @Override
+    public void onBackPressed() {
+        Intent goBackIntent = new Intent();
+        goBackIntent.putExtra("action", "back");
+        setResult(COMMENT_CODE, goBackIntent);
+        finish();
     }
 }
