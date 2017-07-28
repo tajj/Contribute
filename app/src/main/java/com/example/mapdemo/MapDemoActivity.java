@@ -585,11 +585,10 @@ public class MapDemoActivity extends AppCompatActivity implements
     }
 
     private static final CharSequence[] FILTER_ITEMS =
-            {"Last day", "Last week", "Last year"};
-
+            {"Last day", "Last month", "Last year"};
 
     // determine if a given marker has been placed within the X period (relative to current time)
-    private void filterQuery(String filterFlag) {
+    private void filterQuery(final String filterFlag) {
         // Get current time
         final String currentTime = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
         // Query ALL group's markers from Parse & load only corresponding ones
@@ -617,13 +616,35 @@ public class MapDemoActivity extends AppCompatActivity implements
                             // convert to latlng so we can place the marker there
                             LatLng position = new LatLng(latitude, longitude);
                             // add attributes to marker if within year
-                            if (isWithinYear(currentTime, timeStamp)) {
-                                Marker marker = map.addMarker(new MarkerOptions()
-                                        .draggable(true)
-                                        .position(position)
-                                        .title(title)
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
-                                        .snippet(snippet));
+                            if (filterFlag.equals("year")) {
+                                if (isWithinYear(currentTime, timeStamp)) {
+                                    Marker marker = map.addMarker(new MarkerOptions()
+                                            .draggable(true)
+                                            .position(position)
+                                            .title(title)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
+                                            .snippet(snippet));
+                                }
+                            }
+                            else if (filterFlag.equals("month")) {
+                                if (isWithinMonth(currentTime, timeStamp)) {
+                                    Marker marker = map.addMarker(new MarkerOptions()
+                                            .draggable(true)
+                                            .position(position)
+                                            .title(title)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
+                                            .snippet(snippet));
+                                }
+                            }
+                            else if (filterFlag.equals("day")) {
+                                if (isWithinDay(currentTime, timeStamp)) {
+                                    Marker marker = map.addMarker(new MarkerOptions()
+                                            .draggable(true)
+                                            .position(position)
+                                            .title(title)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
+                                            .snippet(snippet));
+                                }
                             }
                         }
                     }
@@ -667,7 +688,7 @@ public class MapDemoActivity extends AppCompatActivity implements
         return true;
     }
 
-    public boolean isWithinWeek(String currentTime, String markerTime) {
+    public boolean isWithinMonth(String currentTime, String markerTime) {
         if (!isWithinYear(currentTime, markerTime)) {
             return false;
         }
@@ -675,7 +696,7 @@ public class MapDemoActivity extends AppCompatActivity implements
     }
 
     public boolean isWithinDay(String currentTime, String markerTime) {
-        if (!isWithinYear(currentTime, markerTime) || !isWithinWeek(currentTime, markerTime)) {
+        if (!isWithinYear(currentTime, markerTime) || !isWithinMonth(currentTime, markerTime)) {
             return false;
         }
         return true;
@@ -695,7 +716,7 @@ public class MapDemoActivity extends AppCompatActivity implements
                         switch (item) {
                             default:
                                 map.clear();
-                                filterQuery("");
+                                filterQuery("year");
                                 // do nothing, just keep markers as they are
                         }
                         dialog.dismiss();
