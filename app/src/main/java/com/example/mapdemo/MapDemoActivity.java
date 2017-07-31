@@ -69,6 +69,8 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 // 4. code that supports deleting a marker (locally AND from parse -- it persists across devices) when you drag & drop it somewhere else
 // 5. code that supports adding a marker (locally AND to parse -- it persists across devices)
 // 6. back button goes back to HomeGroupActivity.
+// 7. supporting filtering of markers by day, month, and year
+// 8. (in progress) loading a "profile view" of each map, in which you ONLY see the markers you've pinned for each map
 
 @RuntimePermissions
 public class MapDemoActivity extends AppCompatActivity implements
@@ -98,6 +100,8 @@ public class MapDemoActivity extends AppCompatActivity implements
     // Search
     public ImageButton ibSearch;
     public EditText etSearchQuery;
+    // Profile
+    public ImageButton ibProfile;
 
     private final static String KEY_LOCATION = "location";
 
@@ -198,6 +202,16 @@ public class MapDemoActivity extends AppCompatActivity implements
                 // etSearchQuery.setVisibility(View.GONE);
             }
         });
+
+        // Option for profile
+        ibProfile = (ImageButton) findViewById(R.id.ibProfile);
+        ibProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         Toast.makeText(this, "Shake your phone to change the type of map you see!", Toast.LENGTH_SHORT).show();
     }
 
@@ -723,10 +737,10 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (currDay > markDay + 1) {
             return false;
         }
-        String currentHour = currentTime.substring(0, 3);
-        String markerHour = markerTime.substring(0, 3);
-        int currHour = Integer.valueOf(currentDay);
-        int markHour = Integer.valueOf(markerDay);
+        String currentHour = currentTime.substring(0, 2);
+        String markerHour = markerTime.substring(0, 2);
+        int currHour = Integer.valueOf(currentHour);
+        int markHour = Integer.valueOf(markerHour);
         if (currHour > markHour && currDay > markDay) {
             return false;
         }
