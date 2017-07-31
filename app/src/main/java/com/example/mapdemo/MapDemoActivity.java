@@ -741,8 +741,8 @@ public class MapDemoActivity extends AppCompatActivity implements
         // configure OnClickListener
         builder.setSingleChoiceItems(
                 FILTER_ITEMS,
-                -1,
-                new DialogInterface.OnClickListener() {
+                -1 ,
+                new DialogInterface.OnClickListener () {
                     public void onClick(DialogInterface dialog, int item) {
                         // Filter!
                         if (item == 2) {

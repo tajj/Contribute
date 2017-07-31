@@ -299,6 +299,27 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                         }
                     }
                 }
+            }
+        });
+        // safety/sanity
+        commentAdapter.notifyDataSetChanged();
+
+        // POST AFTER SCREENSHOT
+        ibPost = (ImageButton) findViewById(R.id.ibPost);
+        ibPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View rootView = findViewById(android.R.id.content).getRootView();
+                rootView.setDrawingCacheEnabled(true);
+                // creates immutable clone of image
+                image = Bitmap.createBitmap(rootView.getDrawingCache());
+                // destroy
+                rootView.destroyDrawingCache();
+                SharePhoto photo = new SharePhoto.Builder().setBitmap(image).build();
+                SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo).build();
+                shareButton.setShareContent(content);
+                counter = 0;
+                shareButton.performClick();
             });
             // safety/sanity
             commentAdapter.notifyDataSetChanged();
@@ -361,6 +382,9 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 }
             });
 
+        // set information
+        tvTitle.setText(ID);
+        tvSnippet.setText(snippet);
 //            ImageButton btn = (ImageButton) findViewById(R.id.btnChat);
 //            btn.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -449,6 +473,13 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 String body = data.getStringExtra("commentBody");
                 String tempFullName = fullName;
                 String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
+                Comment comment;
+                if (fullName != null) {
+                    comment = new Comment(body, fullName.toUpperCase() + " AT " + timeStamp, timeStamp);
+                }
+                else {
+                    comment = new Comment(body, "POSTED AT " + timeStamp, timeStamp);
+                }
                 Comment comment = new Comment(body, tempFullName.toUpperCase() + " AT " + timeStamp, timeStamp);
                 comments.add(comment);
                 commentAdapter.notifyDataSetChanged();
