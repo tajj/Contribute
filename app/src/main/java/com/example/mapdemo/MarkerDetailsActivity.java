@@ -211,10 +211,15 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                             Comment curr;
                             if (fullName == null) {
                                 String notNullFullName = current.getString("fullName");
-                                curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
+                                if (notNullFullName != null) {
+                                    curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
+                                }
+                                else {
+                                    curr = new Comment(body,  "POSTED AT " + timestamp, timestamp);
+                                }
+
                             }
                             else {
-
                                 curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
                             }
                             comments.add(curr);
