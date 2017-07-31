@@ -730,7 +730,14 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (currHour > markHour && currDay > markDay) {
             return false;
         }
-        // could filter by minutes... lazy
+        // by minutes
+        String currentMin = currentTime.substring(3, 5);
+        String markerMin = markerTime.substring(3, 5);
+        int currMin = Integer.valueOf(currentMin);
+        int markMin = Integer.valueOf(markerMin);
+        if (currMin > markMin && currHour > markHour) {
+            return false;
+        }
         return true;
     }
 
