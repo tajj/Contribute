@@ -92,6 +92,8 @@
       
         <activity android:name=".MapDemoActivity" />
         <activity android:name=".HomeGroupActivity" />
+        <activity android:name=".MessageActivity"/>
+
 
         <uses-library
             android:name="com.google.android.maps"
@@ -99,6 +101,7 @@
 
         <activity android:name=".MarkerDetailsActivity"></activity>
         <activity android:name=".PostCommentActivity"></activity>
+        <!--<activity android:name=".PostMessageActivity"></activity>-->
 
         <uses-library android:required="true" android:name="com.google.android.maps" />
 
@@ -113,8 +116,8 @@
         <activity android:name=".SelectGroupMembers" />
         <activity android:name=".CreateNewGroup" />
         <activity android:name=".SecretSeenAds" />
+        <activity android:name=".ChooseActivity"></activity>
         <activity android:name=".AboutActivity"></activity>
-        <!--<activity android:name=".ChatActivity"/>-->
 
     </application>
 
