@@ -203,6 +203,36 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             }
         });
 
+        markerID = ID + snippet;
+        // loading COMMENTS from Parse (can double-query for safety later)
+        ParseQuery<ParseObject> query2  = ParseQuery.getQuery("Comment");
+        query2.whereEqualTo("markerID", markerID);
+        query2.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                if (e == null) {
+                    int size = parseObjects.size();
+                    for (int i = 0; i < size; i++) {
+                        ParseObject current = parseObjects.get(i);
+                        // double query
+                        String checkGroupID = String.valueOf(current.get("groupID"));
+                        if (checkGroupID.equals(groupID)) {
+                            // String username = current.getString("userID");
+                            String body = current.getString("body");
+                            String timestamp = current.getString("timestamp");
+                            Comment curr;
+                            if (fullName == null) {
+                                String notNullFullName = current.getString("fullName");
+                                if (notNullFullName != null) {
+                                    curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
+                                }
+                                else {
+                                    curr = new Comment(body,  "POSTED AT " + timestamp, timestamp);
+                                }
+
+                            }
+                            else {
+                                curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
         // if there's already a path to the corresponding picture for this marker, load it instead of the placeholder image
         if (!parseFlag) { // TODO figure out how to fix double loading -- local & parse loading happen asynchronously so flag isn't useful
             // possible solution ^: multiple threads?
