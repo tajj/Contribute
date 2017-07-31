@@ -231,6 +231,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         });
         // safety/sanity
         commentAdapter.notifyDataSetChanged();
+
         // POST AFTER SCREENSHOT
         ibPost = (ImageButton) findViewById(R.id.ibPost);
         ibPost.setOnClickListener(new View.OnClickListener() {
@@ -250,7 +251,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
 
             }
         });
-
 
         // set information
         tvTitle.setText(ID);
@@ -323,7 +323,13 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 }
                 String body = data.getStringExtra("commentBody");
                 String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
-                Comment comment = new Comment(body, fullName.toUpperCase() + " AT " + timeStamp, timeStamp);
+                Comment comment;
+                if (fullName != null) {
+                    comment = new Comment(body, fullName.toUpperCase() + " AT " + timeStamp, timeStamp);
+                }
+                else {
+                    comment = new Comment(body, "POSTED AT " + timeStamp, timeStamp);
+                }
                 comments.add(comment);
                 commentAdapter.notifyDataSetChanged();
                 rvComments.scrollToPosition(0);
