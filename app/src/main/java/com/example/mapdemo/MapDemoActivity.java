@@ -710,10 +710,27 @@ public class MapDemoActivity extends AppCompatActivity implements
         return true;
     }
 
+    // where "day" is defined as a 24h period
     public boolean isWithinDay(String currentTime, String markerTime) {
-        if (!isWithinYear(currentTime, markerTime) || !isWithinMonth(currentTime, markerTime)) {
+        if (!isWithinMonth(currentTime, markerTime)) {
             return false;
         }
+        // currentDay always >= markerDay
+        String currentDay = currentTime.substring(9, 11);
+        String markerDay = markerTime.substring(9, 11);
+        int currDay = Integer.valueOf(currentDay);
+        int markDay = Integer.valueOf(markerDay);
+        if (currDay > markDay + 1) {
+            return false;
+        }
+        String currentHour = currentTime.substring(0, 3);
+        String markerHour = markerTime.substring(0, 3);
+        int currHour = Integer.valueOf(currentDay);
+        int markHour = Integer.valueOf(markerDay);
+        if (currHour > markHour && currDay > markDay) {
+            return false;
+        }
+        // could filter by minutes... lazy
         return true;
     }
 
