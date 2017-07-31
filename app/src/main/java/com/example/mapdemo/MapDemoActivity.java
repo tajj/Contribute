@@ -653,8 +653,6 @@ public class MapDemoActivity extends AppCompatActivity implements
                 }
             }
         });
-
-
     }
 
     public boolean isWithinYear(String currentTime, String markerTime) {
@@ -668,7 +666,7 @@ public class MapDemoActivity extends AppCompatActivity implements
             return false;
         }
         // then move on to month; since we are already within a <2 year period, if markerMonth > currentMonth, return false.
-        // OFF BY ONE
+        // NO LONGER OFF BY ONE
         String currentMonth = currentTime.substring(6, 8);
         String markerMonth = markerTime.substring(6, 8);
         int currMonth = Integer.valueOf(currentMonth);
@@ -692,6 +690,23 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (!isWithinYear(currentTime, markerTime)) {
             return false;
         }
+        // now that we are within year, current month is always greater than marker's month
+        String currentMonth = currentTime.substring(6, 8);
+        String markerMonth = markerTime.substring(6, 8);
+        int currMonth = Integer.valueOf(currentMonth);
+        int markMonth = Integer.valueOf(markerMonth);
+        if (currMonth - 1 > markMonth) {
+            return false;
+        }
+        // now we are within a 2 month period; narrow it down to days on the dot.
+        String currentDay = currentTime.substring(9, 11);
+        String markerDay = markerTime.substring(9, 11);
+        int currDay = Integer.valueOf(currentDay);
+        int markDay = Integer.valueOf(markerDay);
+        if (currMonth < markMonth && currDay > markDay) {
+            return false;
+        }
+        // if we make it this far
         return true;
     }
 
@@ -719,6 +734,7 @@ public class MapDemoActivity extends AppCompatActivity implements
                             filterQuery("year");
                         }
                         else if (item == 1) {
+                            // by month
                             map.clear();
                             filterQuery("month");
                         }
@@ -782,8 +798,6 @@ public class MapDemoActivity extends AppCompatActivity implements
     protected void search(List<Address> addresses) {
         int size = addresses.size();
         Address address = (Address) addresses.get(size - 1);
-        Double longitude = address.getLongitude();
-        Double latitude = address.getLatitude();
         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
 
         String addressText = String.format(
