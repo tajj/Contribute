@@ -26,7 +26,7 @@ public class AboutActivity extends AppCompatActivity {
 
             public void onClick(View v) {
 
-                    Intent i = new Intent(AboutActivity.this, HomeGroupActivity.class);
+                    Intent i = new Intent(AboutActivity.this, ChooseActivity.class);
 
                     i.putExtra("fullName", fullName);
                     startActivity(i);

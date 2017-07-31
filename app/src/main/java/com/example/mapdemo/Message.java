@@ -9,22 +9,39 @@ import com.parse.ParseObject;
 
 @ParseClassName("Message")
 public class Message extends ParseObject {
-    public static final String USER_ID_KEY = "userId";
-    public static final String BODY_KEY = "body";
+    String body;
+    String userName;
+    String timeStamp;
 
-    public String getUserId() {
-        return getString(USER_ID_KEY);
+    public Message() {}
+
+    public Message (String body, String userName, String timeStamp) {
+        this.body = body;
+        this.userName = userName;
+        this.timeStamp = timeStamp;
     }
 
     public String getBody() {
-        return getString(BODY_KEY);
-    }
-
-    public void setUserId(String userId) {
-        put(USER_ID_KEY, userId);
+        return body;
     }
 
     public void setBody(String body) {
-        put(BODY_KEY, body);
+        this.body = body;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

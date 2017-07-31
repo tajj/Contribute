@@ -153,7 +153,13 @@ public void onClick(View v) {
 
 
         });
+
         }
+    @Override
+    public void onBackPressed() {
+        Intent homeGroupIntent = new Intent(HomeGroupActivity.this, ChooseActivity.class);
+        startActivity(homeGroupIntent);
+    }
 
 
 

@@ -83,7 +83,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     ImageButton ibGalleryPic;
 
     ImageButton ibComment;
-    ImageButton ibMessage;
+    //    ImageButton ibMessage;
     ImageButton ibPost; // TODO right now add to appropriate .xml
     ImageView ivMarkerPhoto;
     ImageButton ibArrowFoward;
@@ -143,16 +143,9 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         // setup RV -- layout manager & setup w adapter
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
-
-//        //Chat Implementation
-//        messages = new ArrayList<>();
-//        messageAdapter = new MessageAdapter(messages);
-//        rvMessages = (RecyclerView) findViewById(rvMessages);
-//        // setup RV -- layout manager & setup w adapter
-//        rvMessages.setLayoutManager(new LinearLayoutManager(this));
-//        rvMessages.setAdapter(messageAdapter);
-
         groupID = getIntent().getStringExtra("groupID");
+
+
 
         // loading photo file based on LOCATION from Parse
         ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseImageArrays");
@@ -180,7 +173,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         });
 
 
-
         ibArrowFoward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,36 +196,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             }
         });
 
-        markerID = ID + snippet;
-        // loading COMMENTS from Parse (can double-query for safety later)
-        ParseQuery<ParseObject> query2  = ParseQuery.getQuery("Comment");
-        query2.whereEqualTo("markerID", markerID);
-        query2.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
-                if (e == null) {
-                    int size = parseObjects.size();
-                    for (int i = 0; i < size; i++) {
-                        ParseObject current = parseObjects.get(i);
-                        // double query
-                        String checkGroupID = String.valueOf(current.get("groupID"));
-                        if (checkGroupID.equals(groupID)) {
-                            // String username = current.getString("userID");
-                            String body = current.getString("body");
-                            String timestamp = current.getString("timestamp");
-                            Comment curr;
-                            if (fullName == null) {
-                                String notNullFullName = current.getString("fullName");
-                                if (notNullFullName != null) {
-                                    curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
-                                }
-                                else {
-                                    curr = new Comment(body,  "POSTED AT " + timestamp, timestamp);
-                                }
-
-                            }
-                            else {
-                                curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
         // if there's already a path to the corresponding picture for this marker, load it instead of the placeholder image
         if (!parseFlag) { // TODO figure out how to fix double loading -- local & parse loading happen asynchronously so flag isn't useful
             // possible solution ^: multiple threads?
@@ -253,15 +215,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 }
             });
 
-            // Post a message
-            ibMessage = (ImageButton) findViewById(R.id.ibMessage);
-            ibMessage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(MarkerDetailsActivity.this, MessageActivity.class));
-                }
-            });
-
 
             // Post a comment
             ibComment = (ImageButton) findViewById(R.id.ibComment);
@@ -277,9 +230,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             markerID = ID + snippet;
             // loading COMMENTS from Parse (can double-query for safety later)
             ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Comment");
-
             query2.whereEqualTo("markerID", markerID);
-
             query2.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
@@ -293,65 +244,30 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                                 // String username = current.getString("userID");
                                 String body = current.getString("body");
                                 String timestamp = current.getString("timestamp");
-                                Comment curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
+                                Comment curr;
+                                if (fullName == null) {
+                                    String notNullFullName = current.getString("fullName");
+                                    curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
+                                    if (notNullFullName != null) {
+                                        curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
+                                    }
+                                    else {
+                                        curr = new Comment(body,  "POSTED AT " + timestamp, timestamp);
+                                    }
+
+                                }
+                                else {
+                                    curr = new Comment(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
+                                }
                                 comments.add(curr);
                                 commentAdapter.notifyItemInserted(comments.size() - 1);
                             }
                         }
                     }
                 }
-            }
-        });
-        // safety/sanity
-        commentAdapter.notifyDataSetChanged();
-
-        // POST AFTER SCREENSHOT
-        ibPost = (ImageButton) findViewById(R.id.ibPost);
-        ibPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                View rootView = findViewById(android.R.id.content).getRootView();
-                rootView.setDrawingCacheEnabled(true);
-                // creates immutable clone of image
-                image = Bitmap.createBitmap(rootView.getDrawingCache());
-                // destroy
-                rootView.destroyDrawingCache();
-                SharePhoto photo = new SharePhoto.Builder().setBitmap(image).build();
-                SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo).build();
-                shareButton.setShareContent(content);
-                counter = 0;
-                shareButton.performClick();
             });
             // safety/sanity
             commentAdapter.notifyDataSetChanged();
-
-//            ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Message");
-//            query2.whereEqualTo("markerID", markerID);
-//            query2.findInBackground(new FindCallback<ParseObject>() {
-//                @Override
-//                public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
-//                    if (e == null) {
-//                        int size = parseObjects.size();
-//                        for (int i = 0; i < size; i++) {
-//                            ParseObject current = parseObjects.get(i);
-//                            // double query
-//                            String checkGroupID = String.valueOf(current.get("groupID"));
-//                            if (checkGroupID.equals(groupID)) {
-//                                // String username = current.getString("userID");
-//                                String body = current.getString("body");
-//                                String timestamp = current.getString("timestamp");
-//                                Message curr = new Message(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
-//                                messages.add(curr);
-//                                messageAdapter.notifyItemInserted(messages.size() - 1);
-//                            }
-//                        }
-//                    }
-//                }
-//            });
-//            // Check for error
-//            messageAdapter.notifyDataSetChanged();
-
-
             // POST AFTER SCREENSHOT
             ibPost = (ImageButton) findViewById(R.id.ibPost);
             ibPost.setOnClickListener(new View.OnClickListener() {
@@ -384,21 +300,10 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 }
             });
 
-        // set information
-        tvTitle.setText(ID);
-        tvSnippet.setText(snippet);
-//            ImageButton btn = (ImageButton) findViewById(R.id.btnChat);
-//            btn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    startActivity(new Intent(MarkerDetailsActivity.this, ChatActivity.class));
-//                }
-//            });
-
         }
-
-
     }
+
+
 
     public void updateIv(int index) {
         if (PFObjects.size() != 0) {
@@ -472,8 +377,12 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == COMMENT_CODE) {
             if (data != null) { // if the user did not hit the cancel button
+                String action = data.getStringExtra("action");
+                // get out fast
+                if (action.equals("back")) {
+                    return;
+                }
                 String body = data.getStringExtra("commentBody");
-                String tempFullName = fullName;
                 String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
                 Comment comment;
                 if (fullName != null) {
@@ -482,7 +391,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 else {
                     comment = new Comment(body, "POSTED AT " + timeStamp, timeStamp);
                 }
-                Comment comment = new Comment(body, tempFullName.toUpperCase() + " AT " + timeStamp, timeStamp);
                 comments.add(comment);
                 commentAdapter.notifyDataSetChanged();
                 rvComments.scrollToPosition(0);
@@ -497,26 +405,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 testObject.saveInBackground();
             }
         }
-//        if (requestCode == CHAT_CODE) {
-//            if (data != null) { // if the user did not hit the cancel button
-//                String body = data.getStringExtra("messageBody");
-//                String tempFullName = fullName;
-//                String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
-//                Message message = new Message(body, tempFullName.toUpperCase() + " AT " + timeStamp, timeStamp);
-//                messages.add(message);
-//                messageAdapter.notifyDataSetChanged();
-//                rvMessages.scrollToPosition(0);
-//                // Put the message into Parse under the Chat class
-//                ParseObject testObject = new ParseObject("Message");
-//                testObject.put("body", body);
-//                testObject.put("timestamp", timeStamp);
-//                testObject.put("markerID", markerID);
-//                // safety
-//                testObject.put("groupID", groupID);
-//                // testObject.put("userID", userID);
-//                testObject.saveInBackground();
-//            }
-//        }
         else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Uri takenPhotoUri = getPhotoFileUri(photoFileName);
