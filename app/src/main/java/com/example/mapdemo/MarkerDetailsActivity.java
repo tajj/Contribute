@@ -43,6 +43,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
+
 // this file has been created & primarily maintained by Maya. Here's what's going on:
 // 1. Loading images from parse & local storage. Need to change this to threads if time permits to ideally & completely solve
 // network failure issue.
@@ -58,7 +59,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public final static int PICK_PHOTO_CODE = 1046;
     public final static int COMMENT_CODE = 1058;
-//    public final static int CHAT_CODE = 1059;
+//    public final static int CHAT_CODE = 1058;
 
 
     public boolean parseFlag = false;
@@ -82,6 +83,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     ImageButton ibGalleryPic;
 
     ImageButton ibComment;
+    ImageButton ibMessage;
     ImageButton ibPost; // TODO right now add to appropriate .xml
     ImageView ivMarkerPhoto;
     ImageButton ibArrowFoward;
@@ -106,10 +108,9 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     int currentIndex = 0;
 
 //    //If we decide to do get to it
-//    ImageButton ibChat;
-//    RecyclerView rvChats;
-//    ChatAdapter chatAdapter;
-//    ArrayList<Chat> chats;
+//    RecyclerView rvMessages;
+//    MessageAdapter messageAdapter;
+//    ArrayList<Message> messages;
 
 
     @Override
@@ -142,16 +143,16 @@ public class MarkerDetailsActivity extends AppCompatActivity {
         // setup RV -- layout manager & setup w adapter
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
-        groupID = getIntent().getStringExtra("groupID");
 
 //        //Chat Implementation
-//        chats = new ArrayList<>();
-//        chatAdapter = new ChatAdapter(chats);
-//        rvChats = (RecyclerView) findViewById(R.id.rvChat);
+//        messages = new ArrayList<>();
+//        messageAdapter = new MessageAdapter(messages);
+//        rvMessages = (RecyclerView) findViewById(rvMessages);
 //        // setup RV -- layout manager & setup w adapter
-//        rvChats.setLayoutManager(new LinearLayoutManager(this));
-//        rvChats.setAdapter(chatAdapter);
+//        rvMessages.setLayoutManager(new LinearLayoutManager(this));
+//        rvMessages.setAdapter(messageAdapter);
 
+        groupID = getIntent().getStringExtra("groupID");
 
         // loading photo file based on LOCATION from Parse
         ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseImageArrays");
@@ -252,16 +253,14 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 }
             });
 
-//            // Post a message
-//            ibChat = (ImageButton) findViewById(R.id.ibChat);
-//            ibChat.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    // TODO pass in username from groupID, etc. with the intent --> actually may not need to do that
-//                    Intent postCommentIntent = new Intent(getApplicationContext(), PostCommentActivity.class);
-//                    startActivityForResult(postCommentIntent, CHAT_CODE);
-//                }
-//            });
+            // Post a message
+            ibMessage = (ImageButton) findViewById(R.id.ibMessage);
+            ibMessage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MarkerDetailsActivity.this, MessageActivity.class));
+                }
+            });
 
 
             // Post a comment
@@ -278,7 +277,9 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             markerID = ID + snippet;
             // loading COMMENTS from Parse (can double-query for safety later)
             ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Comment");
+
             query2.whereEqualTo("markerID", markerID);
+
             query2.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
@@ -324,8 +325,9 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             // safety/sanity
             commentAdapter.notifyDataSetChanged();
 
-//            ParseQuery<ParseObject> query3 = ParseQuery.getQuery("Chat");
-//            query3.findInBackground(new FindCallback<ParseObject>() {
+//            ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Message");
+//            query2.whereEqualTo("markerID", markerID);
+//            query2.findInBackground(new FindCallback<ParseObject>() {
 //                @Override
 //                public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
 //                    if (e == null) {
@@ -338,16 +340,16 @@ public class MarkerDetailsActivity extends AppCompatActivity {
 //                                // String username = current.getString("userID");
 //                                String body = current.getString("body");
 //                                String timestamp = current.getString("timestamp");
-//                                Chat curr = new Chat(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
-//                                chats.add(curr);
-//                                chatAdapter.notifyItemInserted(chats.size() - 1);
+//                                Message curr = new Message(body, fullName.toUpperCase() + " AT " + timestamp, timestamp);
+//                                messages.add(curr);
+//                                messageAdapter.notifyItemInserted(messages.size() - 1);
 //                            }
 //                        }
 //                    }
 //                }
 //            });
 //            // Check for error
-//            chatAdapter.notifyDataSetChanged();
+//            messageAdapter.notifyDataSetChanged();
 
 
             // POST AFTER SCREENSHOT
@@ -495,17 +497,17 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 testObject.saveInBackground();
             }
         }
-//        else if (requestCode == CHAT_CODE) {
+//        if (requestCode == CHAT_CODE) {
 //            if (data != null) { // if the user did not hit the cancel button
-//                String body = data.getStringExtra("chatBody");
+//                String body = data.getStringExtra("messageBody");
 //                String tempFullName = fullName;
 //                String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
-//                Chat chat = new Chat(body, tempFullName.toUpperCase() + " AT " + timeStamp, timeStamp);
-//                chats.add(chat);
-//                chatAdapter.notifyDataSetChanged();
-//                rvChats.scrollToPosition(0);
+//                Message message = new Message(body, tempFullName.toUpperCase() + " AT " + timeStamp, timeStamp);
+//                messages.add(message);
+//                messageAdapter.notifyDataSetChanged();
+//                rvMessages.scrollToPosition(0);
 //                // Put the message into Parse under the Chat class
-//                ParseObject testObject = new ParseObject("Chat");
+//                ParseObject testObject = new ParseObject("Message");
 //                testObject.put("body", body);
 //                testObject.put("timestamp", timeStamp);
 //                testObject.put("markerID", markerID);
@@ -514,6 +516,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
 //                // testObject.put("userID", userID);
 //                testObject.saveInBackground();
 //            }
+//        }
         else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Uri takenPhotoUri = getPhotoFileUri(photoFileName);
