@@ -47,10 +47,20 @@
 		android:id="@+id/ibFilter"
 		android:layout_width="40dp"
 		android:layout_height="40dp"
-		android:layout_alignTop="@+id/ibSearch"
-		android:layout_toEndOf="@+id/ibSearch"
 		android:background="@android:color/transparent"
 		android:scaleType="fitXY"
-		app:srcCompat="@drawable/markerdetails_filter" />
+		app:srcCompat="@drawable/markerdetails_filter"
+		android:layout_below="@+id/ibRefresh"
+		android:layout_alignStart="@+id/ibRefresh" />
+
+	<ImageButton
+		android:id="@+id/ibProfile"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:layout_alignTop="@+id/ibFilter"
+		android:layout_toEndOf="@+id/ibFilter"
+		android:background="@android:color/transparent"
+		android:scaleType="fitXY"
+		app:srcCompat="@drawable/ibprofile" />
 
 </RelativeLayout>
