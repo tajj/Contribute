@@ -83,7 +83,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     ImageButton ibGalleryPic;
 
     ImageButton ibComment;
-    //    ImageButton ibMessage;
     ImageButton ibPost; // TODO right now add to appropriate .xml
     ImageView ivMarkerPhoto;
     ImageButton ibArrowFoward;

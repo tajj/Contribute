@@ -161,16 +161,5 @@ public void onClick(View v) {
         startActivity(homeGroupIntent);
     }
 
-
-
-
-
-
-
-
-
-
-
-
 }
 

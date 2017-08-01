@@ -9,39 +9,43 @@ import com.parse.ParseObject;
 
 @ParseClassName("Message")
 public class Message extends ParseObject {
-    String body;
-    String userName;
-    String timeStamp;
+    public static final String USER_ID_KEY = "userId";
+    public static final String BODY_KEY = "body";
+    public static final String UserName_KEY = "userName";
 
-    public Message() {}
+    public static final String GroupPointer_KEY = "GRPOINTER";
 
-    public Message (String body, String userName, String timeStamp) {
-        this.body = body;
-        this.userName = userName;
-        this.timeStamp = timeStamp;
+
+    public String getUserId() {
+        return getString(USER_ID_KEY);
     }
 
     public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
+        return getString(BODY_KEY);
     }
 
     public String getUserName() {
-        return userName;
+        return getString(UserName_KEY);
     }
+
+    public String getGroupPointer() {
+        return getString(GroupPointer_KEY);
+    }
+
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        put(UserName_KEY, userName);
     }
 
-    public String getTimeStamp() {
-        return timeStamp;
+    public void setGroupPointer(String GroupPointer) {
+        put(GroupPointer_KEY, GroupPointer);
     }
 
-    public void setTimeStamp(String timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setUserId(String userId) {
+        put(USER_ID_KEY, userId);
+    }
+
+    public void setBody(String body) {
+        put(BODY_KEY, body);
     }
 }
