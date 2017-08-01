@@ -106,11 +106,6 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     ArrayList<ParseObject> PFObjects;
     int currentIndex = 0;
 
-//    //If we decide to do get to it
-//    RecyclerView rvMessages;
-//    MessageAdapter messageAdapter;
-//    ArrayList<Message> messages;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,7 +241,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                                 Comment curr;
                                 if (fullName == null) {
                                     String notNullFullName = current.getString("fullName");
-                                    curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
+//                                    curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
                                     if (notNullFullName != null) {
                                         curr = new Comment(body,  notNullFullName.toUpperCase() + " AT " + timestamp, timestamp);
                                     }
