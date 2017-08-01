@@ -69,8 +69,8 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 // 4. code that supports deleting a marker (locally AND from parse -- it persists across devices) when you drag & drop it somewhere else
 // 5. code that supports adding a marker (locally AND to parse -- it persists across devices)
 // 6. back button goes back to HomeGroupActivity.
-// 7. supporting filtering of markers by day, month, and year
-// 8. (in progress) loading a "profile view" of each map, in which you ONLY see the markers you've pinned for each map
+// 7. supporting filtering of markers by day, month, and year (day keeps glitching -- am working on this)
+// 8. loading a "profile view" of each map, in which you ONLY see the markers you've pinned for each map
 
 @RuntimePermissions
 public class MapDemoActivity extends AppCompatActivity implements
@@ -208,7 +208,50 @@ public class MapDemoActivity extends AppCompatActivity implements
         ibProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                map.clear();
+                ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
+                query.whereEqualTo("author", fullName);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                        if (e==null){
+                            int size = parseObjects.size();
+                            if (size > 0) {
+                                for (int i = 0; i < size; i++) {
+                                    // get the current object (ie marker)
+                                    ParseObject current = parseObjects.get(i);
+                                    // extract attributes: title, snippet, position
+                                    String title = current.getString("Title");
+                                    String snippet = current.getString("Snippet");
+                                    String location = current.getString("Location");
+                                    String groupIDCheck = current.getString("groupID");
+                                    // strip extraneous pieces off string
+                                    location = location.substring(10, location.length() - 1);
+                                    String[] latlong =  location.split(",");
+                                    double latitude = Double.parseDouble(latlong[0]);
+                                    double longitude = Double.parseDouble(latlong[1]);
+                                    // convert to latlng so we can place the marker there
+                                    LatLng position = new LatLng(latitude, longitude);
+                                    // add attributes to marker
+                                    if (groupID.equals(groupIDCheck)) {
+                                        Marker marker = map.addMarker(new MarkerOptions()
+                                                .draggable(true)
+                                                .position(position)
+                                                .title(title)
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
+                                                .snippet(snippet));
+                                        // String itemId = parseObjects.get(i).getObjectId();
+                                        // Toast.makeText(MapDemoActivity.this, "Loaded from PARSE: object " + itemId, Toast.LENGTH_SHORT).show();
+                                    }
 
+                                }
+                            }
+                            // else don't load any image & wait for the user to upload one
+                        } else {
+                            Log.e("ERROR:", "" + e.getMessage());
+                        }
+                    }
+                });
             }
         });
 
@@ -408,6 +451,7 @@ public class MapDemoActivity extends AppCompatActivity implements
                         testObject.put("Location", String.valueOf(marker.getPosition()));
                         testObject.put("groupID", groupID);
                         testObject.put("Timestamp", timeStamp);
+                        testObject.put("author", fullName);
                         testObject.saveInBackground();
 
                         // Animate marker using drop effect
@@ -744,14 +788,15 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (currHour > markHour && currDay > markDay) {
             return false;
         }
-        // by minutes
+        // by minutes -- this is largely broken
         String currentMin = currentTime.substring(3, 5);
         String markerMin = markerTime.substring(3, 5);
         int currMin = Integer.valueOf(currentMin);
         int markMin = Integer.valueOf(markerMin);
-        if (currMin > markMin && currHour > markHour) {
-            return false;
-        }
+        // fix misplaced LEQ
+        //if (currMin < markMin && currHour > markHour) {
+            //return false;
+        //}
         return true;
     }
 
