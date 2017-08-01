@@ -15,6 +15,8 @@ public class ChooseActivity extends AppCompatActivity {
     Button btnMessages;
     String fullName;
 
+    public final static int CHAT_CODE = 1058;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,11 +48,12 @@ public class ChooseActivity extends AppCompatActivity {
         btnMessages.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-
-                Intent i = new Intent(ChooseActivity.this, HomeGroupActivity.class);
+                Intent i = new Intent(ChooseActivity.this, HomeChatActivity.class);
 
                 i.putExtra("fullName", fullName);
                 startActivity(i);
+
+                finish();
 
             }
 

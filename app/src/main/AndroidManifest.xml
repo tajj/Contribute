@@ -91,8 +91,10 @@
         </activity>
       
         <activity android:name=".MapDemoActivity" />
+        <activity android:name=".ChatActivity"/>
         <activity android:name=".HomeGroupActivity" />
-        <activity android:name=".MessageActivity"/>
+        <activity android:name=".HomeChatActivity" />
+
 
 
         <uses-library
@@ -114,7 +116,9 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".SelectGroupMembers" />
+        <activity android:name=".SelectGroupChatMembers" />
         <activity android:name=".CreateNewGroup" />
+        <activity android:name=".CreateNewGroupChat" />
         <activity android:name=".SecretSeenAds" />
         <activity android:name=".ChooseActivity"></activity>
         <activity android:name=".AboutActivity"></activity>
