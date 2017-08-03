@@ -376,6 +376,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 if (action.equals("back")) {
                     return;
                 }
+                fullName = getIntent().getStringExtra("fullName");
                 String body = data.getStringExtra("commentBody");
                 String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
                 Comment comment;
