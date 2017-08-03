@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/ibPostMessage"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginLeft="304dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/comment_post"
+        android:layout_below="@+id/etPostMessage" />
+
+    <EditText
+        android:id="@+id/etPostMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Type your comment here!"
+        android:inputType="textMultiLine"
+        android:layout_below="@+id/tvMessagePrompt"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/tvMessagePrompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/ibPostMessage"
+        android:text="Post a comment!"
+        android:textColor="#5DBCD2"
+        android:textSize="32sp" />
+
+    <ImageButton
+        android:id="@+id/ibCancel"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/etPostMessage"
+        android:layout_marginStart="15dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/comment_cancel" />
+
+</RelativeLayout>
