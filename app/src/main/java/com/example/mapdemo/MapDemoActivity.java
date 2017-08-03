@@ -159,11 +159,14 @@ public class MapDemoActivity extends AppCompatActivity implements
                 @Override
                 public void onMapReady(GoogleMap map) {
                     map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    if (action.equals("aggregate_profile")) {
+                    if (action == null) {
+                        loadMap(map);
+                    }
+                    else if (action.equals("aggregate_profile")) {
                         loadProfileMap(map);
                     }
                     else {
-                        loadMap(map);
+                        // in trouble
                     }
 
                 }
