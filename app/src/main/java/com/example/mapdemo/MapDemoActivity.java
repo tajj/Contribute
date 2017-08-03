@@ -102,6 +102,8 @@ public class MapDemoActivity extends AppCompatActivity implements
     public EditText etSearchQuery;
     // Profile
     public ImageButton ibProfile;
+    // Aggregate profile
+    public String action;
 
     private final static String KEY_LOCATION = "location";
 
@@ -117,12 +119,16 @@ public class MapDemoActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_demo_activity);
 
+        // get action
+        action = getIntent().getStringExtra("action");
+        fullName = getIntent().getStringExtra("fullName");
+        markerList = new ArrayList<>();
+
         // get right groupID
         groupID = getIntent().getStringExtra("groupId");
-        fullName = getIntent().getStringExtra("fullName");
 
         // initialize list of markers
-        markerList = new ArrayList<>();
+
 
         if (TextUtils.isEmpty(getResources().getString(R.string.google_maps_api_key))) {
             throw new IllegalStateException("You forgot to supply a Google Maps API key");
@@ -153,7 +159,13 @@ public class MapDemoActivity extends AppCompatActivity implements
                 @Override
                 public void onMapReady(GoogleMap map) {
                     map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    loadMap(map);
+                    if (action.equals("aggregate_profile")) {
+                        loadProfileMap(map);
+                    }
+                    else {
+                        loadMap(map);
+                    }
+
                 }
             });
         } else {
@@ -330,6 +342,123 @@ public class MapDemoActivity extends AppCompatActivity implements
             });
             ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
             query.whereEqualTo("groupID", groupID);
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                    if (e==null){
+                        int size = parseObjects.size();
+                        if (size > 0) {
+                            for (int i = 0; i < size; i++) {
+                                // get the current object (ie marker)
+                                ParseObject current = parseObjects.get(i);
+                                // extract attributes: title, snippet, position
+                                String title = current.getString("Title");
+                                String snippet = current.getString("Snippet");
+                                String location = current.getString("Location");
+                                // strip extraneous pieces off string
+                                location = location.substring(10, location.length() - 1);
+                                String[] latlong =  location.split(",");
+                                double latitude = Double.parseDouble(latlong[0]);
+                                double longitude = Double.parseDouble(latlong[1]);
+                                // convert to latlng so we can place the marker there
+                                LatLng position = new LatLng(latitude, longitude);
+                                // add attributes to marker
+                                Marker marker = map.addMarker(new MarkerOptions()
+                                        .draggable(true)
+                                        .position(position)
+                                        .title(title)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
+                                        .snippet(snippet));
+                                // String itemId = parseObjects.get(i).getObjectId();
+                                // Toast.makeText(MapDemoActivity.this, "Loaded from PARSE: object " + itemId, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        // else don't load any image & wait for the user to upload one
+                    } else {
+                        Log.e("ERROR:", "" + e.getMessage());
+                    }
+                }
+            });
+            MapDemoActivityPermissionsDispatcher.getMyLocationWithCheck(this);
+            MapDemoActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+
+        } else {
+            Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    protected void loadProfileMap(GoogleMap googleMap) {
+
+        map = googleMap;
+
+        if (map != null) {
+            // Map is ready
+            // Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            map.setOnMapLongClickListener(this);
+            // When the marker is clicked, show details about it
+            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    // Toast.makeText(MapDemoActivity.this, "Clicked a marker!", Toast.LENGTH_SHORT).show();
+                    Intent markerDetailsIntent = new Intent(getApplicationContext(), MarkerDetailsActivity.class);
+                    markerDetailsIntent.putExtra("title", marker.getTitle());
+                    markerDetailsIntent.putExtra("snippet", marker.getSnippet());
+                    markerDetailsIntent.putExtra("location", String.valueOf(marker.getPosition()));
+                    markerDetailsIntent.putExtra("fullName", fullName);
+                    markerDetailsIntent.putExtra("groupID", groupID);
+                    startActivity(markerDetailsIntent);
+                    return false;
+                }
+            });
+            map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDrag(Marker marker) {
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                    // when the marker is done being dragged, delete it from Parse using the snippet as a key.
+                    final String snippet = marker.getSnippet();
+                    // Get all markers from this groupID from Parse, then get the marker from that ID matching the current snippet
+                    ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
+                    query.whereEqualTo("groupID", groupID);
+                    // Delete it
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                            if (e==null){
+                                int size = parseObjects.size();
+                                if (size > 0) {
+                                    for (int i = 0; i < size; i++) {
+                                        String curr = parseObjects.get(i).getString("Snippet");
+                                        if (curr.equals(snippet)) {
+                                            ParseObject deleteMe = parseObjects.get(i);
+                                            try {
+                                                deleteMe.delete();
+                                                deleteMe.saveInBackground();
+                                                break;
+                                            } catch (ParseException e1) {
+                                                e1.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                                // else log the error
+                            } else {
+                                Log.e("ERROR:", "" + e.getMessage());
+                            }
+                        }
+                    });
+                    // Remove the actual marker object from the map for real-time result
+                    marker.remove();
+                }
+
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+                }
+            });
+            ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
+            query.whereEqualTo("author", fullName);
             query.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {

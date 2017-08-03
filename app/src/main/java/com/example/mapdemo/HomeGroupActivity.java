@@ -36,6 +36,7 @@ public class HomeGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.btnAdd)ImageButton btnAdd;
     @BindView(R.id.tvSecretSeenAds) TextView btnSecretSeenAds;
+    @BindView(R.id.ibProfile) ImageButton ibProfile;
 
 
     @Override
@@ -149,18 +150,22 @@ public void onClick(View v) {
 
 
         });
-        }
 
+    ibProfile.setOnClickListener(new View.OnClickListener() {
 
-
-
-
-
-
-
-
-
-
-
+        public void onClick(View v) {
+            // game plan:
+            // go to map demo activity & load an empty map
+            // pass an intent that the action is profile
+            // unwrap and create an if statement against load map if action is profile
+            // query all markers not based on groupID but author only
+            // kinda gross, will get job done
+            Intent profileIntent = new Intent (HomeGroupActivity.this, MapDemoActivity.class);
+            profileIntent.putExtra("action", "aggregate_profile");
+            profileIntent.putExtra("fullName", fullName);
+            startActivity(profileIntent);
+            }
+        });
+    }
 }
 
