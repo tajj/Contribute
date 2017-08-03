@@ -416,7 +416,6 @@ public class MapDemoActivity extends AppCompatActivity implements
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         // set message_item.xml to AlertDialog builder
         alertDialogBuilder.setView(messageView);
-
         // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
@@ -607,9 +606,9 @@ public class MapDemoActivity extends AppCompatActivity implements
         }
         // Removed for now because annoying: report to the UI that the location was updated
         mCurrentLocation = location;
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
+        // String msg = "Updated Location: " +
+                // Double.toString(location.getLatitude()) + "," +
+                // Double.toString(location.getLongitude());
         // Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
@@ -723,6 +722,9 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (currYear - markYear > 1) {
             return false;
         }
+        else if (currYear == markYear) {
+            return true;
+        }
         // then move on to month; since we are already within a <2 year period, if markerMonth > currentMonth, return false.
         // NO LONGER OFF BY ONE
         String currentMonth = currentTime.substring(6, 8);
@@ -731,6 +733,9 @@ public class MapDemoActivity extends AppCompatActivity implements
         int markMonth = Integer.valueOf(markerMonth);
         if (markMonth > currMonth) {
             return false;
+        }
+        else if (markMonth == currMonth) {
+            return true;
         }
         // then move on to day; if markerDay > currentDay, return false.
         String currentDay = currentTime.substring(9, 11);
@@ -756,12 +761,15 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (currMonth - 1 > markMonth) {
             return false;
         }
+        else if (currMonth == markMonth) {
+            return true;
+        }
         // now we are within a 2 month period; narrow it down to days on the dot.
         String currentDay = currentTime.substring(9, 11);
         String markerDay = markerTime.substring(9, 11);
         int currDay = Integer.valueOf(currentDay);
         int markDay = Integer.valueOf(markerDay);
-        if (currMonth < markMonth && currDay > markDay) {
+        if (currDay > markDay - 1) {
             return false;
         }
         // if we make it this far
@@ -781,22 +789,16 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (currDay > markDay + 1) {
             return false;
         }
+        else if (currDay == markDay) {
+            return true;
+        }
         String currentHour = currentTime.substring(0, 2);
         String markerHour = markerTime.substring(0, 2);
         int currHour = Integer.valueOf(currentHour);
         int markHour = Integer.valueOf(markerHour);
-        if (currHour > markHour && currDay > markDay) {
+        if (currHour > markHour - 1) {
             return false;
         }
-        // by minutes -- this is largely broken
-        String currentMin = currentTime.substring(3, 5);
-        String markerMin = markerTime.substring(3, 5);
-        int currMin = Integer.valueOf(currentMin);
-        int markMin = Integer.valueOf(markerMin);
-        // fix misplaced LEQ
-        //if (currMin < markMin && currHour > markHour) {
-            //return false;
-        //}
         return true;
     }
 
@@ -822,6 +824,7 @@ public class MapDemoActivity extends AppCompatActivity implements
                             filterQuery("month");
                         }
                         else if (item == 0) {
+                            // by day (please work)
                             map.clear();
                             filterQuery("day");
                         }
