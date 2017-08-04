@@ -582,7 +582,10 @@ public class MapDemoActivity extends AppCompatActivity implements
                         testObject.put("Location", String.valueOf(marker.getPosition()));
                         testObject.put("groupID", groupID);
                         testObject.put("Timestamp", timeStamp);
-                        testObject.put("author", fullName);
+                        fullName = getIntent().getStringExtra("fullName");
+                        if (fullName != null) {
+                            testObject.put("author", fullName);
+                        }
                         testObject.saveInBackground();
 
                         // Animate marker using drop effect
