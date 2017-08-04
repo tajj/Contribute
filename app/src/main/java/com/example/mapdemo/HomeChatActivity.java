@@ -89,7 +89,9 @@ import butterknife.ButterKnife;
                             //using count to locate a specific group in the list,
                             int count=0;
                             for (ParseObject groups : scoreList) {
-                                list.add((String) groups.get("groupName")+ "\nOther Members: "+username);
+//                                list.add((String) groups.get("groupName")+ "\nOther Members: "+username);
+                                list.add((String) groups.get("groupName"));
+
                                 groupID[count]=(String) groups.get("userGroup");
                                 groupNAME[count]=(String) groups.get("groupName");
                                 grpDate[count]=groups.getCreatedAt();

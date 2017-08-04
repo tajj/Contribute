@@ -2,20 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background">
+    android:background="@drawable/img4">
 
 
 <Button
         android:id="@+id/btnGroups"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_marginTop="214dp"
+    android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="140dp"
         android:background="@drawable/btn"
         android:backgroundTint="@color/button_grey"
-        android:text="Mäp" />
+        android:text="Mäp"
+    android:layout_below="@+id/textDisplay"
+    android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/btnMessages"
@@ -41,7 +41,7 @@
         android:selectAllOnFocus="false"
         android:singleLine="false"
         android:text="             Mäp :: Chät"
-        android:textColor="#FFEB3E41"
+        android:textColor="@color/button_grey"
         android:textSize="26sp"
         android:textStyle="bold" />
 

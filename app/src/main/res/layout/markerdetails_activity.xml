@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#ffffffff"
+    android:background="@drawable/img4"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1">
@@ -19,34 +19,36 @@
         android:id="@+id/ibArrowFoward"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="#ffffffff"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="87dp"
+        android:background="@android:color/transparent"
         android:scaleType="fitXY"
         app:srcCompat="@drawable/ic_arrow_forward_black_24dp"
-        android:layout_marginTop="87dp"
-        android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/ivMarkerPhoto" />
 
     <ImageButton
         android:id="@+id/ibArrowBack"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="#ffffffff"
-        android:scaleType="fitXY"
-        app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+        android:layout_alignParentStart="true"
         android:layout_alignTop="@+id/ibArrowFoward"
-        android:layout_toStartOf="@+id/ivMarkerPhoto" />
+        android:layout_toStartOf="@+id/ivMarkerPhoto"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
 
     <ImageButton
         android:id="@+id/ibUploadPic"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="#ffffffff"
-        android:scaleType="fitXY"
-        android:layout_marginRight="10dp"
-        app:srcCompat="@drawable/markerdetails_takepic"
-        android:layout_marginTop="20dp"
+        android:layout_alignStart="@+id/tvTitle"
         android:layout_below="@+id/ivMarkerPhoto"
-        android:layout_alignStart="@+id/tvTitle" />
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/markerdetails_takepic" />
 
     <!--<ImageButton-->
         <!--android:id="@+id/btnChat"-->
@@ -78,7 +80,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="18dp"
         android:text="TextView"
-        android:textColor="#5DBCD2"
+        android:textColor="@color/com_facebook_blue"
         android:textSize="22sp" />
 
     <TextView
@@ -123,12 +125,12 @@
         android:id="@+id/tvComments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvSnippet"
+        android:layout_below="@+id/tvSnippet"
         android:layout_marginTop="10dp"
         android:text="Comments"
-        android:textColor="#5DBCD2"
-        android:textSize="22sp"
-        android:layout_below="@+id/tvSnippet"
-        android:layout_alignStart="@+id/tvSnippet" />
+        android:textColor="@color/com_facebook_blue"
+        android:textSize="22sp" />
 
     <ImageButton
         android:id="@+id/ibPost"

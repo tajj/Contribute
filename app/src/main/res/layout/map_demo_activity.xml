@@ -50,8 +50,8 @@
 		android:background="@android:color/transparent"
 		android:scaleType="fitXY"
 		app:srcCompat="@drawable/markerdetails_filter"
-		android:layout_below="@+id/ibRefresh"
-		android:layout_alignStart="@+id/ibRefresh" />
+		android:layout_alignTop="@+id/ibSearch"
+		android:layout_toEndOf="@+id/ibSearch" />
 
 	<ImageButton
 		android:id="@+id/ibProfile"

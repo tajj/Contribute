@@ -4,23 +4,26 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:weightSum="1">
-    <ImageView
+
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivProfileOther"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:contentDescription="@string/profile_other"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@mipmap/ic_launcher" />
+         />
 
     <TextView
         android:id="@+id/tvBody"
         android:layout_width="171dp"
         android:layout_height="45dp"
         android:ellipsize="end"
-        android:lines="1"
+        android:lines="5"
         android:text="UserBody"
-        android:textSize="14sp"
-        android:layout_alignBottom="@+id/ivProfileOther"
-        android:layout_toEndOf="@+id/ivProfileOther" />
+        android:textColor="@color/twitter_blue"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@id/tvUsername"
@@ -28,19 +31,20 @@
         android:layout_height="15dp"
         android:lines="1"
         android:text="UserName"
-        android:textSize="12sp"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/ivProfileOther"
-        android:layout_above="@+id/tvBody" />
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_below="@+id/tvBody"
+        android:layout_alignStart="@+id/tvBody"
+        android:layout_alignEnd="@+id/tvBody" />
 
 
-
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivProfileMe"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:contentDescription="@string/profile_me"
-        android:src="@mipmap/ic_launcher"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:contentDescription="@string/profile_me"
+         />
 </RelativeLayout>
