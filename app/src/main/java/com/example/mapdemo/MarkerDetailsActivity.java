@@ -394,6 +394,11 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 testObject.put("body", body);
                 testObject.put("timestamp", timeStamp);
                 testObject.put("markerID", markerID);
+                testObject.put("fullName", fullName);
+                // safety TODO add to github
+                if (groupID != null) {
+                    testObject.put("groupID", groupID);
+                }
                 // safety
                 testObject.put("groupID", groupID);
                 // testObject.put("userID", userID);
