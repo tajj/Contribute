@@ -44,7 +44,8 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:alpha="0"
-        android:layout_alignParentTop="true"
+        android:layout_marginEnd="76dp"
+        android:layout_alignTop="@+id/btnAdd"
         android:layout_toStartOf="@+id/btnAdd" />
 
     <TextView
@@ -60,6 +61,16 @@
         android:textColor="@color/black"
         android:textSize="20dp"
         android:layout_above="@+id/lvGroupsList" />
+
+    <ImageButton
+        android:id="@+id/ibProfile"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/btnAdd"
+        android:layout_toStartOf="@+id/btnAdd"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ibprofile" />
 
 
 </RelativeLayout>

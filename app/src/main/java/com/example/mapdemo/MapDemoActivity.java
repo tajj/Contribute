@@ -69,8 +69,8 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 // 4. code that supports deleting a marker (locally AND from parse -- it persists across devices) when you drag & drop it somewhere else
 // 5. code that supports adding a marker (locally AND to parse -- it persists across devices)
 // 6. back button goes back to HomeGroupActivity.
-// 7. supporting filtering of markers by day, month, and year
-// 8. (in progress) loading a "profile view" of each map, in which you ONLY see the markers you've pinned for each map
+// 7. supporting filtering of markers by day, month, and year (day keeps glitching -- am working on this)
+// 8. loading a "profile view" of each map, in which you ONLY see the markers you've pinned for each map
 
 @RuntimePermissions
 public class MapDemoActivity extends AppCompatActivity implements
@@ -102,6 +102,8 @@ public class MapDemoActivity extends AppCompatActivity implements
     public EditText etSearchQuery;
     // Profile
     public ImageButton ibProfile;
+    // Aggregate profile
+    public String action;
 
     private final static String KEY_LOCATION = "location";
 
@@ -117,12 +119,16 @@ public class MapDemoActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_demo_activity);
 
+        // get action
+        action = getIntent().getStringExtra("action");
+        fullName = getIntent().getStringExtra("fullName");
+        markerList = new ArrayList<>();
+
         // get right groupID
         groupID = getIntent().getStringExtra("groupId");
-        fullName = getIntent().getStringExtra("fullName");
 
         // initialize list of markers
-        markerList = new ArrayList<>();
+
 
         if (TextUtils.isEmpty(getResources().getString(R.string.google_maps_api_key))) {
             throw new IllegalStateException("You forgot to supply a Google Maps API key");
@@ -153,7 +159,16 @@ public class MapDemoActivity extends AppCompatActivity implements
                 @Override
                 public void onMapReady(GoogleMap map) {
                     map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    loadMap(map);
+                    if (action == null) {
+                        loadMap(map);
+                    }
+                    else if (action.equals("aggregate_profile")) {
+                        loadProfileMap(map);
+                    }
+                    else {
+                        // in trouble
+                    }
+
                 }
             });
         } else {
@@ -208,7 +223,50 @@ public class MapDemoActivity extends AppCompatActivity implements
         ibProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                map.clear();
+                ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
+                query.whereEqualTo("author", fullName);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                        if (e==null){
+                            int size = parseObjects.size();
+                            if (size > 0) {
+                                for (int i = 0; i < size; i++) {
+                                    // get the current object (ie marker)
+                                    ParseObject current = parseObjects.get(i);
+                                    // extract attributes: title, snippet, position
+                                    String title = current.getString("Title");
+                                    String snippet = current.getString("Snippet");
+                                    String location = current.getString("Location");
+                                    String groupIDCheck = current.getString("groupID");
+                                    // strip extraneous pieces off string
+                                    location = location.substring(10, location.length() - 1);
+                                    String[] latlong =  location.split(",");
+                                    double latitude = Double.parseDouble(latlong[0]);
+                                    double longitude = Double.parseDouble(latlong[1]);
+                                    // convert to latlng so we can place the marker there
+                                    LatLng position = new LatLng(latitude, longitude);
+                                    // add attributes to marker
+                                    if (groupID.equals(groupIDCheck)) {
+                                        Marker marker = map.addMarker(new MarkerOptions()
+                                                .draggable(true)
+                                                .position(position)
+                                                .title(title)
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
+                                                .snippet(snippet));
+                                        // String itemId = parseObjects.get(i).getObjectId();
+                                        // Toast.makeText(MapDemoActivity.this, "Loaded from PARSE: object " + itemId, Toast.LENGTH_SHORT).show();
+                                    }
 
+                                }
+                            }
+                            // else don't load any image & wait for the user to upload one
+                        } else {
+                            Log.e("ERROR:", "" + e.getMessage());
+                        }
+                    }
+                });
             }
         });
 
@@ -332,6 +390,123 @@ public class MapDemoActivity extends AppCompatActivity implements
         }
     }
 
+    protected void loadProfileMap(GoogleMap googleMap) {
+
+        map = googleMap;
+
+        if (map != null) {
+            // Map is ready
+            // Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
+            map.setOnMapLongClickListener(this);
+            // When the marker is clicked, show details about it
+            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    // Toast.makeText(MapDemoActivity.this, "Clicked a marker!", Toast.LENGTH_SHORT).show();
+                    Intent markerDetailsIntent = new Intent(getApplicationContext(), MarkerDetailsActivity.class);
+                    markerDetailsIntent.putExtra("title", marker.getTitle());
+                    markerDetailsIntent.putExtra("snippet", marker.getSnippet());
+                    markerDetailsIntent.putExtra("location", String.valueOf(marker.getPosition()));
+                    markerDetailsIntent.putExtra("fullName", fullName);
+                    markerDetailsIntent.putExtra("groupID", groupID);
+                    startActivity(markerDetailsIntent);
+                    return false;
+                }
+            });
+            map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDrag(Marker marker) {
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                    // when the marker is done being dragged, delete it from Parse using the snippet as a key.
+                    final String snippet = marker.getSnippet();
+                    // Get all markers from this groupID from Parse, then get the marker from that ID matching the current snippet
+                    ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
+                    query.whereEqualTo("groupID", groupID);
+                    // Delete it
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                            if (e==null){
+                                int size = parseObjects.size();
+                                if (size > 0) {
+                                    for (int i = 0; i < size; i++) {
+                                        String curr = parseObjects.get(i).getString("Snippet");
+                                        if (curr.equals(snippet)) {
+                                            ParseObject deleteMe = parseObjects.get(i);
+                                            try {
+                                                deleteMe.delete();
+                                                deleteMe.saveInBackground();
+                                                break;
+                                            } catch (ParseException e1) {
+                                                e1.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                                // else log the error
+                            } else {
+                                Log.e("ERROR:", "" + e.getMessage());
+                            }
+                        }
+                    });
+                    // Remove the actual marker object from the map for real-time result
+                    marker.remove();
+                }
+
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+                }
+            });
+            ParseQuery<ParseObject> query  = ParseQuery.getQuery("Markers");
+            query.whereEqualTo("author", fullName);
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                    if (e==null){
+                        int size = parseObjects.size();
+                        if (size > 0) {
+                            for (int i = 0; i < size; i++) {
+                                // get the current object (ie marker)
+                                ParseObject current = parseObjects.get(i);
+                                // extract attributes: title, snippet, position
+                                String title = current.getString("Title");
+                                String snippet = current.getString("Snippet");
+                                String location = current.getString("Location");
+                                // strip extraneous pieces off string
+                                location = location.substring(10, location.length() - 1);
+                                String[] latlong =  location.split(",");
+                                double latitude = Double.parseDouble(latlong[0]);
+                                double longitude = Double.parseDouble(latlong[1]);
+                                // convert to latlng so we can place the marker there
+                                LatLng position = new LatLng(latitude, longitude);
+                                // add attributes to marker
+                                Marker marker = map.addMarker(new MarkerOptions()
+                                        .draggable(true)
+                                        .position(position)
+                                        .title(title)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapicon))
+                                        .snippet(snippet));
+                                // String itemId = parseObjects.get(i).getObjectId();
+                                // Toast.makeText(MapDemoActivity.this, "Loaded from PARSE: object " + itemId, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        // else don't load any image & wait for the user to upload one
+                    } else {
+                        Log.e("ERROR:", "" + e.getMessage());
+                    }
+                }
+            });
+            MapDemoActivityPermissionsDispatcher.getMyLocationWithCheck(this);
+            MapDemoActivityPermissionsDispatcher.startLocationUpdatesWithCheck(this);
+
+        } else {
+            Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void dropPinEffect(final Marker marker) {
         // Handler allows us to repeat a code block after a specified delay
         final android.os.Handler handler = new android.os.Handler();
@@ -373,7 +548,6 @@ public class MapDemoActivity extends AppCompatActivity implements
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         // set message_item.xml to AlertDialog builder
         alertDialogBuilder.setView(messageView);
-
         // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
@@ -408,6 +582,7 @@ public class MapDemoActivity extends AppCompatActivity implements
                         testObject.put("Location", String.valueOf(marker.getPosition()));
                         testObject.put("groupID", groupID);
                         testObject.put("Timestamp", timeStamp);
+                        testObject.put("author", fullName);
                         testObject.saveInBackground();
 
                         // Animate marker using drop effect
@@ -563,9 +738,9 @@ public class MapDemoActivity extends AppCompatActivity implements
         }
         // Removed for now because annoying: report to the UI that the location was updated
         mCurrentLocation = location;
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
+        // String msg = "Updated Location: " +
+                // Double.toString(location.getLatitude()) + "," +
+                // Double.toString(location.getLongitude());
         // Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
@@ -679,6 +854,9 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (currYear - markYear > 1) {
             return false;
         }
+        else if (currYear == markYear) {
+            return true;
+        }
         // then move on to month; since we are already within a <2 year period, if markerMonth > currentMonth, return false.
         // NO LONGER OFF BY ONE
         String currentMonth = currentTime.substring(6, 8);
@@ -687,6 +865,9 @@ public class MapDemoActivity extends AppCompatActivity implements
         int markMonth = Integer.valueOf(markerMonth);
         if (markMonth > currMonth) {
             return false;
+        }
+        else if (markMonth == currMonth) {
+            return true;
         }
         // then move on to day; if markerDay > currentDay, return false.
         String currentDay = currentTime.substring(9, 11);
@@ -712,12 +893,15 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (currMonth - 1 > markMonth) {
             return false;
         }
+        else if (currMonth == markMonth) {
+            return true;
+        }
         // now we are within a 2 month period; narrow it down to days on the dot.
         String currentDay = currentTime.substring(9, 11);
         String markerDay = markerTime.substring(9, 11);
         int currDay = Integer.valueOf(currentDay);
         int markDay = Integer.valueOf(markerDay);
-        if (currMonth < markMonth && currDay > markDay) {
+        if (currDay > markDay - 1) {
             return false;
         }
         // if we make it this far
@@ -737,19 +921,14 @@ public class MapDemoActivity extends AppCompatActivity implements
         if (currDay > markDay + 1) {
             return false;
         }
+        else if (currDay == markDay) {
+            return true;
+        }
         String currentHour = currentTime.substring(0, 2);
         String markerHour = markerTime.substring(0, 2);
         int currHour = Integer.valueOf(currentHour);
         int markHour = Integer.valueOf(markerHour);
-        if (currHour > markHour && currDay > markDay) {
-            return false;
-        }
-        // by minutes
-        String currentMin = currentTime.substring(3, 5);
-        String markerMin = markerTime.substring(3, 5);
-        int currMin = Integer.valueOf(currentMin);
-        int markMin = Integer.valueOf(markerMin);
-        if (currMin > markMin && currHour > markHour) {
+        if (currHour > markHour - 1) {
             return false;
         }
         return true;
@@ -777,6 +956,7 @@ public class MapDemoActivity extends AppCompatActivity implements
                             filterQuery("month");
                         }
                         else if (item == 0) {
+                            // by day (please work)
                             map.clear();
                             filterQuery("day");
                         }
