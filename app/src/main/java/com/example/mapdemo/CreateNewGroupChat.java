@@ -1,23 +1,19 @@
 package com.example.mapdemo;
 
-/**
- * Created by amade002 on 7/31/17.
- */
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
-        import android.content.Intent;
-        import android.os.Bundle;
-        import android.support.v7.app.AppCompatActivity;
-        import android.view.View;
-        import android.widget.Button;
-        import android.widget.EditText;
-        import android.widget.Toast;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
-        import com.parse.ParseException;
-        import com.parse.ParseObject;
-        import com.parse.ParseUser;
-
-        import butterknife.BindView;
-        import butterknife.ButterKnife;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class CreateNewGroupChat extends AppCompatActivity {
 
@@ -58,7 +54,7 @@ public class CreateNewGroupChat extends AppCompatActivity {
                     addUsr.put("userGroup", newGrp.getObjectId());
                     addUsr.put("groupName", grpname);
                     addUsr.save();
-                    Toast.makeText(getApplicationContext(), "Group Created Successfully", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "GroupChat Created Successfully", Toast.LENGTH_LONG).show();
 
                 } catch (ParseException e) {
                     e.printStackTrace();

@@ -21,9 +21,9 @@
     <color name="inline_action_retweet_pressed">@color/medium_gray_50</color>
     <color name="black">#000000</color>
     <color name="white">#fff</color>
-    <color name="primary_material_dark">#2196f3</color>
+    <color name="primary_material_dark">#0e0838</color>
     <color name="light_grey">#A9A9A9</color>
-    <color name="button_grey">#e19898</color>
+    <color name="button_grey">#fddc3a</color>
     <color name="primary">#00BCD4</color>
     <color name="primaryDark">#0097A7</color>
     <color name="accent">#EB446B</color>

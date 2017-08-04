@@ -1,10 +1,6 @@
 package com.example.mapdemo;
 
-/**
- * Created by amade002 on 7/31/17.
- */
-
-        import android.app.ProgressDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -119,7 +115,7 @@ public class SelectGroupChatMembers extends AppCompatActivity {
                     addUsr.save();
                     ii.putExtra("username", userids[position]);
 
-                    Toast.makeText(getApplicationContext(), "Member added to Group", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Member added to GroupChat", Toast.LENGTH_LONG).show();
                 } catch (ParseException e) {
                     Log.d("error:", e.getMessage());
                 }
@@ -152,4 +148,3 @@ public class SelectGroupChatMembers extends AppCompatActivity {
 //    }
 
 }
-

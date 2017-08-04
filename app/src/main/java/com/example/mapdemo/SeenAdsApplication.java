@@ -21,6 +21,8 @@ public class SeenAdsApplication extends Application {
 
 
         ParseObject.registerSubclass(Message.class);
+//        ParseObject.registerSubclass(UserConnectionsChat.class);
+
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
