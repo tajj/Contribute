@@ -11,6 +11,10 @@ import com.parse.ParseObject;
 public class Message extends ParseObject {
     public static final String USER_ID_KEY = "userId";
     public static final String BODY_KEY = "body";
+    public static final String UserName_KEY = "userName";
+
+    public static final String GroupPointer_KEY = "GRPOINTER";
+
 
     public String getUserId() {
         return getString(USER_ID_KEY);
@@ -18,6 +22,23 @@ public class Message extends ParseObject {
 
     public String getBody() {
         return getString(BODY_KEY);
+    }
+
+    public String getUserName() {
+        return getString(UserName_KEY);
+    }
+
+    public String getGroupPointer() {
+        return getString(GroupPointer_KEY);
+    }
+
+
+    public void setUserName(String userName) {
+        put(UserName_KEY, userName);
+    }
+
+    public void setGroupPointer(String GroupPointer) {
+        put(GroupPointer_KEY, GroupPointer);
     }
 
     public void setUserId(String userId) {

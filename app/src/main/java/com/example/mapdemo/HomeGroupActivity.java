@@ -46,6 +46,10 @@ public class HomeGroupActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         fullName = getIntent().getStringExtra("fullName");
 
+        //ParseUser currentUser = ParseUser.getCurrentUser();
+        //btnAdd = (Button) findViewById(R.id.btnAdd);
+        //btnSecretSeenAds = (Button) findViewById(R.id.tvSecretSeenAds);
+        //ii=new Intent(HomeGroupActivity.this, SelectGroupMembers.class); //
         Intent i=getIntent();
         final String username=i.getStringExtra("username");
 
@@ -150,6 +154,13 @@ public void onClick(View v) {
 
 
         });
+
+        }
+    @Override
+    public void onBackPressed() {
+        Intent homeGroupIntent = new Intent(HomeGroupActivity.this, ChooseActivity.class);
+        startActivity(homeGroupIntent);
+    }
 
     ibProfile.setOnClickListener(new View.OnClickListener() {
 

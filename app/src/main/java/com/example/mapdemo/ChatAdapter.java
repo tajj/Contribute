@@ -16,7 +16,7 @@ import java.security.MessageDigest;
 import java.util.List;
 
 /**
- * Created by amade002 on 7/24/17.
+ * Created by amade002 on 7/3/17.
  */
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
@@ -43,21 +43,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Message message = mMessages.get(position);
+
         final boolean isMe = message.getUserId() != null && message.getUserId().equals(mUserId);
 
         if (isMe) {
             holder.imageMe.setVisibility(View.VISIBLE);
             holder.imageOther.setVisibility(View.GONE);
             holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+            holder.userName.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
         } else {
             holder.imageOther.setVisibility(View.VISIBLE);
             holder.imageMe.setVisibility(View.GONE);
             holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            holder.userName.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         }
 
         final ImageView profileView = isMe ? holder.imageMe : holder.imageOther;
         Glide.with(mContext).load(getProfileUrl(message.getUserId())).into(profileView);
         holder.body.setText(message.getBody());
+        holder.userName.setText(message.getUserName());
     }
 
     // Create a gravatar image based on the hash value obtained from userId
@@ -83,12 +87,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         ImageView imageOther;
         ImageView imageMe;
         TextView body;
+        TextView userName;
 
         public ViewHolder(View itemView) {
             super(itemView);
             imageOther = (ImageView)itemView.findViewById(R.id.ivProfileOther);
             imageMe = (ImageView)itemView.findViewById(R.id.ivProfileMe);
             body = (TextView)itemView.findViewById(R.id.tvBody);
+            userName = (TextView)itemView.findViewById(R.id.tvUsername);
+
         }
     }
 }

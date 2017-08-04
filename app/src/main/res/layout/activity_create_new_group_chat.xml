@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.mapdemo.CreateNewGroup">
+
+    <TextView
+        android:id="@+id/tvCreateGroupChatTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:capitalize="characters"
+        android:text="Create Group Chat:"
+        android:textColor="@color/twitter_blue"
+        android:textSize="32sp" />
+
+
+    <EditText
+        android:id="@+id/edGroupChatName"
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:hint="Group Chat Name"
+        android:textColor="@color/button_grey"
+        android:layout_below="@+id/tvCreateGroupChatTitle"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/btnCreateGroupChat"
+        android:layout_width="375dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/edGroupChatName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/btn"
+        android:backgroundTint="@color/button_grey"
+        android:text="Create Group"
+        android:textColor="@color/accent" />
+
+</RelativeLayout>

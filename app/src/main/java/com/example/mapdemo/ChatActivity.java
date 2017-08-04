@@ -1,5 +1,6 @@
 package com.example.mapdemo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ public class ChatActivity extends AppCompatActivity {
     static final String TAG = ChatActivity.class.getSimpleName();
     static final String USER_ID_KEY = "userId";
     static final String BODY_KEY = "body";
+    static final String userName_KEY = "userName";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
     // Create a handler which can run code periodically
     static final int POLL_INTERVAL = 1000; // milliseconds
@@ -49,17 +51,25 @@ public class ChatActivity extends AppCompatActivity {
     ChatAdapter mAdapter;
     // Keep track of initial load to scroll to the bottom of the ListView
     boolean mFirstLoad;
+    Bundle extras;
+    public String groupID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        groupID = getIntent().getStringExtra("GroupPointer");
+
         // User login
         if (ParseUser.getCurrentUser() != null) { // start with existing user
             startWithCurrentUser();
         } else { // If not logged in, login as a new anonymous user
             login();
         }
+        extras = getIntent().getExtras();
+        refreshMessages();
+
         // myHandler.postDelayed(mRefreshMessagesRunnable, POLL_INTERVAL);
 
         // Make sure the Parse server is setup to configured for live queries
@@ -132,6 +142,7 @@ public class ChatActivity extends AppCompatActivity {
         btSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String data = etMessage.getText().toString();
                 //ParseObject message = ParseObject.create("Message");
                 //message.put(Message.USER_ID_KEY, userId);
@@ -139,7 +150,9 @@ public class ChatActivity extends AppCompatActivity {
                 // Using new `Message` Parse-backed model now
                 Message message = new Message();
                 message.setBody(data);
+                message.setUserName(data);
                 message.setUserId(ParseUser.getCurrentUser().getObjectId());
+                message.setGroupPointer(extras.getString("grpPointer"));
                 message.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
@@ -162,6 +175,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // get the latest 50 messages, order will show up newest to oldest of this group
         query.orderByDescending("createdAt");
+        query.whereEqualTo("GRPOINTER",extras.getString("grpPointer"));
         // Execute query to fetch all messages from Parse asynchronously
         // This is equivalent to a SELECT query with SQL
         query.findInBackground(new FindCallback<Message>() {
@@ -180,6 +194,12 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent homeGroupIntent = new Intent(ChatActivity.this, HomeChatActivity.class);
+        startActivity(homeGroupIntent);
     }
 
 }
