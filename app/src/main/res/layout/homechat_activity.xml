@@ -21,9 +21,9 @@
         android:id="@+id/btnDelete1"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@color/button_grey"
+        android:background="@android:color/transparent"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/delete_btn"
+        app:srcCompat="@drawable/mapsearch"
         android:layout_alignBottom="@+id/btnDelete"
         android:layout_alignParentEnd="true" />
 
