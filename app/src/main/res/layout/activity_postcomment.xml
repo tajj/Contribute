@@ -33,7 +33,7 @@
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/ibPostComment"
         android:text="Post a comment!"
-        android:textColor="#5DBCD2"
+        android:textColor="@color/black"
         android:textSize="32sp" />
 
     <ImageButton

@@ -11,9 +11,9 @@
         android:id="@+id/selectGroupChatheader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:textColor="@color/twitter_blue"
-        android:text="Select Group Chat Members:" />
+        android:text="Select Group Chat Members:"
+        android:textColor="@color/black"
+        android:textSize="25sp" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
