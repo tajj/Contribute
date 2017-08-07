@@ -217,6 +217,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     // TODO pass in username from groupID, etc. with the intent --> actually may not need to do that
                     Intent postCommentIntent = new Intent(getApplicationContext(), PostCommentActivity.class);
+                    postCommentIntent.putExtra("fullName", fullName);
                     startActivityForResult(postCommentIntent, COMMENT_CODE);
                 }
             });
@@ -376,7 +377,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 if (action.equals("back")) {
                     return;
                 }
-                fullName = getIntent().getStringExtra("fullName");
+                fullName = data.getStringExtra("fullName");
                 String body = data.getStringExtra("commentBody");
                 String timeStamp = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date());
                 Comment comment;
@@ -394,7 +395,10 @@ public class MarkerDetailsActivity extends AppCompatActivity {
                 testObject.put("body", body);
                 testObject.put("timestamp", timeStamp);
                 testObject.put("markerID", markerID);
-                testObject.put("fullName", fullName);
+                fullName = getIntent().getStringExtra("fullName");
+                if (fullName != null) {
+                    testObject.put("fullName", fullName);
+                }
                 // safety TODO add to github
                 if (groupID != null) {
                     testObject.put("groupID", groupID);

@@ -548,6 +548,7 @@ public class MapDemoActivity extends AppCompatActivity implements
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         // set message_item.xml to AlertDialog builder
         alertDialogBuilder.setView(messageView);
+
         // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
@@ -582,10 +583,6 @@ public class MapDemoActivity extends AppCompatActivity implements
                         testObject.put("Location", String.valueOf(marker.getPosition()));
                         testObject.put("groupID", groupID);
                         testObject.put("Timestamp", timeStamp);
-                        fullName = getIntent().getStringExtra("fullName");
-                        if (fullName != null) {
-                            testObject.put("author", fullName);
-                        }
                         testObject.saveInBackground();
 
                         // Animate marker using drop effect
@@ -742,8 +739,8 @@ public class MapDemoActivity extends AppCompatActivity implements
         // Removed for now because annoying: report to the UI that the location was updated
         mCurrentLocation = location;
         // String msg = "Updated Location: " +
-                // Double.toString(location.getLatitude()) + "," +
-                // Double.toString(location.getLongitude());
+        // Double.toString(location.getLatitude()) + "," +
+        // Double.toString(location.getLongitude());
         // Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
