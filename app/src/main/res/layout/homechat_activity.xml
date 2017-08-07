@@ -21,11 +21,11 @@
         android:id="@+id/btnDelete1"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
         android:background="@color/button_grey"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/delete_btn"
-        android:layout_alignBottom="@+id/btnDelete"
-        android:layout_alignParentEnd="true" />
+        app:srcCompat="@drawable/delete_btn" />
 
     <ImageButton
         android:id="@+id/btnAdd"

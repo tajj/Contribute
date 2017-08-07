@@ -89,7 +89,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-      
+
         <activity android:name=".MapDemoActivity" />
         <activity android:name=".ChatActivity"/>
         <activity android:name=".HomeGroupActivity" />

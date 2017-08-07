@@ -64,5 +64,7 @@ public class ChooseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Intent homeGroupChatIntent = new Intent(ChooseActivity.this, AboutActivity.class);
+        startActivity(homeGroupChatIntent);
     }
 }

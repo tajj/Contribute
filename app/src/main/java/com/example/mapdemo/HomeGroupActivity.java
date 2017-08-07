@@ -34,9 +34,12 @@ public class HomeGroupActivity extends AppCompatActivity {
     String fullName;
     Date[] grpDate;
 
-    @BindView(R.id.btnAdd)ImageButton btnAdd;
-    @BindView(R.id.tvSecretSeenAds) TextView btnSecretSeenAds;
-    @BindView(R.id.ibProfile) ImageButton ibProfile;
+    @BindView(R.id.btnAdd)
+    ImageButton btnAdd;
+    @BindView(R.id.tvSecretSeenAds)
+    TextView btnSecretSeenAds;
+    @BindView(R.id.ibProfile)
+    ImageButton ibProfile;
 
 
     @Override
@@ -50,18 +53,18 @@ public class HomeGroupActivity extends AppCompatActivity {
         //btnAdd = (Button) findViewById(R.id.btnAdd);
         //btnSecretSeenAds = (Button) findViewById(R.id.tvSecretSeenAds);
         //ii=new Intent(HomeGroupActivity.this, SelectGroupMembers.class); //
-        Intent i=getIntent();
-        final String username=i.getStringExtra("username");
+        Intent i = getIntent();
+        final String username = i.getStringExtra("username");
 
 
         //N.B. this intent needs to be final, used in inner class later
         final Intent ii = new Intent(HomeGroupActivity.this, MapDemoActivity.class);
 
-        final ListView listview =(ListView)findViewById(R.id.lvGroupsList);
+        final ListView listview = (ListView) findViewById(R.id.lvGroupsList);
 
         //creating query in parse for the users
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserConnections");
-       // query.whereEqualTo("email", ParseUser.getCurrentUser().getEmail());
+        // query.whereEqualTo("email", ParseUser.getCurrentUser().getEmail());
         query.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
 
         final ArrayList<String> list = new ArrayList<String>();
@@ -74,22 +77,22 @@ public class HomeGroupActivity extends AppCompatActivity {
         //using arrays for navigating groups
         final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.group_row, list);
         listview.setAdapter(listAdapter);
-        try{
+        try {
             query.findInBackground(new FindCallback<ParseObject>() {
                 //using scorelist object to get # of groups to create correct size array
                 public void done(List<ParseObject> scoreList, com.parse.ParseException e) {
                     if (e == null) {
-                        groupID=new String[scoreList.size()];
-                        groupNAME=new String[scoreList.size()];
-                        grpDate=new Date[scoreList.size()];
+                        groupID = new String[scoreList.size()];
+                        groupNAME = new String[scoreList.size()];
+                        grpDate = new Date[scoreList.size()];
 
                         //using count to locate a specific group in the list,
-                        int count=0;
+                        int count = 0;
                         for (ParseObject groups : scoreList) {
-                            list.add((String) groups.get("groupName")+ "\nOther Members: "+username+"\nCreated: "+groups.getCreatedAt());
-                            groupID[count]=(String) groups.get("userGroup");
-                            groupNAME[count]=(String) groups.get("groupName");
-                            grpDate[count]=groups.getCreatedAt();
+                            list.add((String) groups.get("groupName") + "\nOther Members: " + username + "\nCreated: " + groups.getCreatedAt());
+                            groupID[count] = (String) groups.get("userGroup");
+                            groupNAME[count] = (String) groups.get("groupName");
+                            grpDate[count] = groups.getCreatedAt();
                             count++;
                         }
 
@@ -97,17 +100,16 @@ public class HomeGroupActivity extends AppCompatActivity {
                         listAdapter.notifyDataSetChanged();
                         pd.cancel();
                     } else {
-                        Log.d("score", "Error: " + e.getMessage());                    }
-                    if (scoreList.size()==0) {
+                        Log.d("score", "Error: " + e.getMessage());
+                    }
+                    if (scoreList.size() == 0) {
                         Toast.makeText(getApplicationContext(), "No Groups Found", Toast.LENGTH_LONG).show();
                     }
                 }
             });
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Log.e("exception:", e.toString());
         }
-
 
 
 //passes group id and name to the maps activity
@@ -129,16 +131,14 @@ public class HomeGroupActivity extends AppCompatActivity {
         });
 
 
-
-
 //this is the button to add groups
         btnAdd.setOnClickListener(new View.OnClickListener() {
 
-public void onClick(View v) {
+            public void onClick(View v) {
 
-        Intent i = new Intent (HomeGroupActivity.this, CreateNewGroup.class);
-        startActivity(i);
-        }
+                Intent i = new Intent(HomeGroupActivity.this, CreateNewGroup.class);
+                startActivity(i);
+            }
 
 
         });
@@ -148,35 +148,29 @@ public void onClick(View v) {
 
             public void onClick(View v) {
 
-                Intent i = new Intent (HomeGroupActivity.this, SecretSeenAds.class);
+                Intent i = new Intent(HomeGroupActivity.this, SecretSeenAds.class);
                 startActivity(i);
             }
 
 
         });
 
-        }
-    @Override
-    public void onBackPressed() {
-        Intent homeGroupIntent = new Intent(HomeGroupActivity.this, ChooseActivity.class);
-        startActivity(homeGroupIntent);
-    }
 
-    ibProfile.setOnClickListener(new View.OnClickListener() {
+        ibProfile.setOnClickListener(new View.OnClickListener() {
 
-        public void onClick(View v) {
-            // game plan:
-            // go to map demo activity & load an empty map
-            // pass an intent that the action is profile
-            // unwrap and create an if statement against load map if action is profile
-            // query all markers not based on groupID but author only
-            // kinda gross, will get job done
-            Intent profileIntent = new Intent (HomeGroupActivity.this, MapDemoActivity.class);
-            profileIntent.putExtra("action", "aggregate_profile");
-            profileIntent.putExtra("fullName", fullName);
-            startActivity(profileIntent);
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(HomeGroupActivity.this, MapDemoActivity.class);
+                profileIntent.putExtra("action", "aggregate_profile");
+                profileIntent.putExtra("fullName", fullName);
+                startActivity(profileIntent);
             }
         });
     }
+    @Override
+    public void onBackPressed () {
+        Intent homeGroupIntent = new Intent(HomeGroupActivity.this, ChooseActivity.class);
+        startActivity(homeGroupIntent);
+    }
 }
+
 

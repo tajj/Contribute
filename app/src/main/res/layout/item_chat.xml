@@ -16,27 +16,27 @@
         android:id="@+id/tvBody"
         android:layout_width="171dp"
         android:layout_height="45dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:ellipsize="end"
         android:lines="5"
         android:text="UserBody"
-        android:textColor="@color/twitter_blue"
-        android:textStyle="bold"
+        android:textColor="@color/black"
         android:textSize="12sp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@id/tvUsername"
         android:layout_width="171dp"
         android:layout_height="15dp"
+        android:layout_alignEnd="@+id/tvBody"
+        android:layout_alignStart="@+id/tvBody"
+        android:layout_below="@+id/tvBody"
         android:lines="1"
         android:text="UserName"
+        android:textColor="@color/cardview_light_background"
         android:textSize="10sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_below="@+id/tvBody"
-        android:layout_alignStart="@+id/tvBody"
-        android:layout_alignEnd="@+id/tvBody" />
+        android:textStyle="bold" />
 
 
     <de.hdodenhof.circleimageview.CircleImageView
