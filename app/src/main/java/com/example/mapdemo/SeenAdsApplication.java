@@ -1,4 +1,4 @@
-package com.example.mapdemo;
+package com.tajj.mapdemo;
 
 /**
  * Created by mayajey on 7/17/17.

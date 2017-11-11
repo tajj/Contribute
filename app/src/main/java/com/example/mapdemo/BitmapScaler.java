@@ -1,4 +1,4 @@
-package com.example.mapdemo;
+package com.tajj.mapdemo;
 import android.graphics.Bitmap;
 
 // file courtesy codepath for Android

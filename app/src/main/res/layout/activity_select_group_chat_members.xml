@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/img4"
-    tools:context="com.example.mapdemo.SelectGroupChatMembers">
+    tools:context="com.tajj.mapdemo.SelectGroupChatMembers">
 
     <TextView
         android:id="@+id/selectGroupChatheader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Group Chat Members:"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="25sp" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

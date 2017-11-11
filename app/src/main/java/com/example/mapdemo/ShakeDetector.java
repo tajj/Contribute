@@ -1,4 +1,4 @@
-package com.example.mapdemo;
+package com.tajj.mapdemo;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;

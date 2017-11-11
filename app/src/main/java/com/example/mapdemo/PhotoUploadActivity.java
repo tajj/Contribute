@@ -1,4 +1,4 @@
-package com.example.mapdemo;
+package com.tajj.mapdemo;
 
 //@ParseClassName("PhotoUploadActivity")
 //@RuntimePermissions

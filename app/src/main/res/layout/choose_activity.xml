@@ -5,44 +5,32 @@
     android:background="@drawable/img4">
 
 
-<Button
+    <Button
         android:id="@+id/btnGroups"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_marginTop="140dp"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="180dp"
         android:background="@drawable/btn"
-        android:backgroundTint="@color/button_grey"
-        android:text="Mäp"
-    android:layout_below="@+id/textDisplay"
-    android:layout_centerHorizontal="true" />
+        android:backgroundTint="@color/white"
+        android:textColor="@color/com_facebook_blue"
+        android:text="Map"
+        android:textSize="20sp"
+        android:layout_below="@+id/textDisplay"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/btnMessages"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
         android:layout_alignStart="@+id/btnGroups"
+        android:textColor="@color/com_facebook_blue"
         android:layout_below="@+id/btnGroups"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/btn"
-        android:backgroundTint="@color/button_grey"
-        android:text="Chät" />
-
-    <TextView
-        android:id="@+id/textDisplay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="43dp"
-        android:ems="10"
-        android:inputType="text"
-        android:selectAllOnFocus="false"
-        android:singleLine="false"
-        android:text="             Mäp :: Chät"
-        android:textColor="@color/button_grey"
-        android:textSize="26sp"
-        android:textStyle="bold" />
+        android:textSize="20sp"
+        android:backgroundTint="@color/white"
+        android:text="Chat" />
 
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.example.mapdemo;
+package com.tajj.mapdemo;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 //  Use this to output your Facebook Key Hash to Logs
 //        try {
 //            PackageInfo info = getPackageManager().getPackageInfo(
-//                    "com.example.demo",
+//                    "com.tajj.demo",
 //                    PackageManager.GET_SIGNATURES);
 //            for (Signature signature : info.signatures) {
 //                MessageDigest md = MessageDigest.getInstance("SHA");

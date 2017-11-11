@@ -1,4 +1,4 @@
-package com.example.mapdemo;
+package com.tajj.mapdemo;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -54,7 +54,7 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView rvChat;
     ArrayList<Message> mMessages;
 //    ArrayList<UserConnectionsChat> mUsernames;
-    ChatAdapter mAdapter;
+    com.tajj.mapdemo.ChatAdapter mAdapter;
     // Keep track of initial load to scroll to the bottom of the ListView
     boolean mFirstLoad;
     Bundle extras;
@@ -187,7 +187,7 @@ public class ChatActivity extends AppCompatActivity {
         mMessages = new ArrayList<>();
         mFirstLoad = true;
         final String userId = ParseUser.getCurrentUser().getObjectId();
-        mAdapter = new ChatAdapter(ChatActivity.this, userId, mMessages);
+        mAdapter = new com.tajj.mapdemo.ChatAdapter(ChatActivity.this, userId, mMessages);
         rvChat.setAdapter(mAdapter);
 
         // associate the LayoutManager with the RecylcerView
@@ -349,7 +349,7 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent homeGroupIntent = new Intent(ChatActivity.this, HomeChatActivity.class);
+        Intent homeGroupIntent = new Intent(ChatActivity.this, com.tajj.mapdemo.HomeChatActivity.class);
         startActivity(homeGroupIntent);
     }
 

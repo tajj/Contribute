@@ -1,4 +1,4 @@
-package com.example.mapdemo;
+package com.tajj.mapdemo;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -68,7 +68,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
     public String groupID;
 
     // For local storage
-    public final String ABSOLUTE_FILE_PATH = "/storage/emulated/0/Android/data/com.example.mapdemo/files/Pictures/SeenAds/";
+    public final String ABSOLUTE_FILE_PATH = "/storage/emulated/0/Android/data/com.tajj.mapdemo/files/Pictures/SeenAds/";
     public String photoFileName = "photo.jpg";
     // private String finalFileName = "";
 
@@ -562,7 +562,7 @@ public class MarkerDetailsActivity extends AppCompatActivity {
             // Return the file target for the photo based on filename
             File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
             // wrap File object into a content provider
-            return FileProvider.getUriForFile(MarkerDetailsActivity.this, "com.example.mapdemo.fileprovider", file);
+            return FileProvider.getUriForFile(MarkerDetailsActivity.this, "com.tajj.mapdemo.fileprovider", file);
         }
         return null;
     }

@@ -1,4 +1,4 @@
-package com.example.mapdemo;
+package com.tajj.mapdemo;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -19,6 +19,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -36,8 +37,8 @@ public class HomeGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.btnAdd)
     ImageButton btnAdd;
-    @BindView(R.id.tvSecretSeenAds)
-    TextView btnSecretSeenAds;
+    //@BindView(R.id.tvSecretSeenAds)
+   // TextView btnSecretSeenAds;
     @BindView(R.id.ibProfile)
     ImageButton ibProfile;
 
@@ -58,7 +59,7 @@ public class HomeGroupActivity extends AppCompatActivity {
 
 
         //N.B. this intent needs to be final, used in inner class later
-        final Intent ii = new Intent(HomeGroupActivity.this, MapDemoActivity.class);
+        final Intent ii = new Intent(HomeGroupActivity.this, com.tajj.mapdemo.MapDemoActivity.class);
 
         final ListView listview = (ListView) findViewById(R.id.lvGroupsList);
 
@@ -89,7 +90,7 @@ public class HomeGroupActivity extends AppCompatActivity {
                         //using count to locate a specific group in the list,
                         int count = 0;
                         for (ParseObject groups : scoreList) {
-                            list.add((String) groups.get("groupName") + "\nOther Members: " + username + "\nCreated: " + groups.getCreatedAt());
+                            list.add(0,(String) groups.get("groupName") + "\nCreated: " + groups.getCreatedAt());
                             groupID[count] = (String) groups.get("userGroup");
                             groupNAME[count] = (String) groups.get("groupName");
                             grpDate[count] = groups.getCreatedAt();
@@ -97,7 +98,9 @@ public class HomeGroupActivity extends AppCompatActivity {
                         }
 
                         listview.setTextFilterEnabled(true);
+                        //Collections.reverse(list);
                         listAdapter.notifyDataSetChanged();
+                       // Collections.reverse(list);
                         pd.cancel();
                     } else {
                         Log.d("score", "Error: " + e.getMessage());
@@ -136,7 +139,7 @@ public class HomeGroupActivity extends AppCompatActivity {
 
             public void onClick(View v) {
 
-                Intent i = new Intent(HomeGroupActivity.this, CreateNewGroup.class);
+                Intent i = new Intent(HomeGroupActivity.this, com.tajj.mapdemo.CreateNewGroup.class);
                 startActivity(i);
             }
 
@@ -144,22 +147,22 @@ public class HomeGroupActivity extends AppCompatActivity {
         });
 
 
-        btnSecretSeenAds.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-
-                Intent i = new Intent(HomeGroupActivity.this, SecretSeenAds.class);
-                startActivity(i);
-            }
-
-
-        });
+//        btnSecretSeenAds.setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//
+//                Intent i = new Intent(HomeGroupActivity.this, com.tajj.mapdemo.SecretSeenAds.class);
+//                startActivity(i);
+//            }
+//
+//
+//        });
 
 
         ibProfile.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                Intent profileIntent = new Intent(HomeGroupActivity.this, MapDemoActivity.class);
+                Intent profileIntent = new Intent(HomeGroupActivity.this, com.tajj.mapdemo.MapDemoActivity.class);
                 profileIntent.putExtra("action", "aggregate_profile");
                 profileIntent.putExtra("fullName", fullName);
                 startActivity(profileIntent);
@@ -168,7 +171,7 @@ public class HomeGroupActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed () {
-        Intent homeGroupIntent = new Intent(HomeGroupActivity.this, ChooseActivity.class);
+        Intent homeGroupIntent = new Intent(HomeGroupActivity.this, com.tajj.mapdemo.ChooseActivity.class);
         startActivity(homeGroupIntent);
     }
 }

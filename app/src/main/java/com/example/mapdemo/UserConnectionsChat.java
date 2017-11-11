@@ -1,4 +1,4 @@
-//package com.example.mapdemo;
+//package com.tajj.mapdemo;
 //
 //import com.parse.ParseClassName;
 //import com.parse.ParseObject;

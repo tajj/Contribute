@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:screenOrientation="portrait"
-    tools:context="com.example.mapdemo.LoginActivity">
+    tools:context="com.tajj.mapdemo.LoginActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -18,9 +18,9 @@
             style="@style/TextAppearance.AppCompat.Display1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="30dp"
             android:text="About This App"
-            android:textColor="@color/black" />
+            android:textColor="@color/white" />
 
     </FrameLayout>
 
@@ -30,7 +30,7 @@
         android:layout_marginBottom="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="125dp"
+        android:layout_marginTop="160dp"
         android:background="@android:color/white"
         app:cardCornerRadius="2dp"
         app:cardElevation="3dp"
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Welcome. This app is for sharing media with a group of people based on location. You can create a group of users and share a map with them, pinning locations to the map and attaching photos and text to those pins. You can also comment on different pins. Enjoy! Created by Alex Madera, Taylor Jean-Jacques and Maya Jeyendran."
+                android:text="Welcome. This is an app for social good that has the most effective and realistic effects on benefiting the environment, and contributing to social and non-profit causes by providing location of places to recycle, help a non profit and more. Created by Taylor Jean-Jacques."
                 android:textColor="@color/com_facebook_blue" />
 
 

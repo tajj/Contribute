@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mapdemo.CreateNewGroup"
+    tools:context="com.tajj.mapdemo.CreateNewGroup"
     android:background="@drawable/img4">
 
     <TextView
@@ -15,7 +15,7 @@
         android:layout_alignParentTop="true"
         android:capitalize="characters"
         android:text="Create Group Chat:"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="32sp" />
 
 
@@ -36,8 +36,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="17dp"
         android:background="@drawable/btn"
-        android:backgroundTint="@color/button_grey"
+        android:backgroundTint="@color/white"
         android:text="Create Group"
-        android:textColor="@color/black" />
+        android:textColor="@color/com_facebook_blue" />
 
 </RelativeLayout>

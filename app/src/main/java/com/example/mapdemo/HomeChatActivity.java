@@ -1,4 +1,4 @@
-package com.example.mapdemo;
+package com.tajj.mapdemo;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -57,7 +57,7 @@ import butterknife.ButterKnife;
 
 
             //N.B. this intent needs to be final, used in inner class later
-            final Intent ii = new Intent(HomeChatActivity.this, ChatActivity.class);
+            final Intent ii = new Intent(HomeChatActivity.this, com.tajj.mapdemo.ChatActivity.class);
 
             final ListView listview =(ListView)findViewById(R.id.lvGroupsChatList);
 
@@ -90,7 +90,7 @@ import butterknife.ButterKnife;
                             int count=0;
                             for (ParseObject groups : scoreList) {
 //                                list.add((String) groups.get("groupName")+ "\nOther Members: "+username);
-                                list.add((String) groups.get("groupName"));
+                                list.add(0, (String) groups.get("groupName"));
 
                                 groupID[count]=(String) groups.get("userGroup");
                                 groupNAME[count]=(String) groups.get("groupName");
@@ -143,7 +143,7 @@ import butterknife.ButterKnife;
 
                 public void onClick(View v) {
 
-                    Intent i = new Intent (HomeChatActivity.this, CreateNewGroupChat.class);
+                    Intent i = new Intent (HomeChatActivity.this, com.tajj.mapdemo.CreateNewGroupChat.class);
                     startActivity(i);
                 }
 
@@ -153,7 +153,7 @@ import butterknife.ButterKnife;
         }
         @Override
         public void onBackPressed() {
-            Intent homeGroupChatIntent = new Intent(HomeChatActivity.this, ChooseActivity.class);
+            Intent homeGroupChatIntent = new Intent(HomeChatActivity.this, com.tajj.mapdemo.ChooseActivity.class);
             startActivity(homeGroupChatIntent);
         }
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:screenOrientation="portrait"
     android:background="@drawable/img4"
-    tools:context="com.example.mapdemo.LoginActivity">
+    tools:context="com.tajj.mapdemo.LoginActivity">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -85,8 +85,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:text="         Show &amp; Tell"
-            android:textColor="@color/black" />
+            android:text="            Contribute"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
 
     </FrameLayout>
 
